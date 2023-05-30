@@ -1,10 +1,10 @@
-package io.charla.login_manager;
+package io.charla.users;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class DemoApplicationTests {
+class UsersApplicationTests {
 
 	@Test
 	void contextLoads() {
