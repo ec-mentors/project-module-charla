@@ -1,3 +1,15 @@
 # Default ignored files
 /shelf/
 /workspace.xml
+out/
+*.jar
+/out/
+.gitignore
+.idea
+*.iml
+*.cmd
+*.jar
+*.xml
+*.properties
+*.mvn
+*.mvnw
