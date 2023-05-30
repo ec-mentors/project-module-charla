@@ -78,3 +78,33 @@ fabric.properties
 
 # Android studio 3.1+ serialized cache file
 .idea/caches/build_file_checksums.ser
+
+# Spring Boot specific
+/target/
+!.mvn/wrapper/maven-wrapper.jar
+# IDE specific
+.idea/
+*.iml
+*.iws
+*.ipr
+# Maven specific
+mvnw
+mvnw.cmd
+.mvn/
+# Gradle specific
+.gradle/
+gradle/
+gradlew
+gradlew.bat
+# Logs
+logs/
+*.log
+# OS generated files
+.DS_Store
+Thumbs.db
+# Temporary files
+*.tmp
+# Compiled class files
+*.class
+# Build directories
+/build/
