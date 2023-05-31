@@ -1,5 +1,6 @@
 package io.charla.users.security;
 
+import io.charla.users.configuration.CustomExceptionHandler;
 import io.charla.users.persistence.repository.UserRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,31 +20,26 @@ import java.io.PrintWriter;
 @Configuration
 public class SecurityConfig {
 
+    private final AuthenticationEntryPoint authenticationEntryPoint;
+
+    public SecurityConfig(AuthenticationEntryPoint authenticationEntryPoint) {
+        this.authenticationEntryPoint = authenticationEntryPoint;
+    }
+
+
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .cors().and().csrf().disable()
                 .authorizeRequests()
-                .antMatchers(HttpMethod.POST,"/users/signup").permitAll()
+                .antMatchers(HttpMethod.POST, "/users/signup").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .httpBasic()
-                .authenticationEntryPoint(authenticationEntryPoint());
+                .authenticationEntryPoint(authenticationEntryPoint);
         return http.build();
     }
 
-    @Bean
-    public AuthenticationEntryPoint authenticationEntryPoint() {
-        return (request, response, authException) -> {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.setContentType("application/json");
-
-            String responseBody = "{\"Error\":\"Please make sure you have entered correct credentials!\"}";
-            PrintWriter writer = response.getWriter();
-            writer.print(responseBody);
-            writer.flush();
-        };
-    }
 
     @Bean
     UserDetailsService userDetailsService(UserRepository userRepository) {
@@ -56,6 +52,7 @@ public class SecurityConfig {
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
     @Bean
     DaoAuthenticationProvider authenticationProvider(UserDetailsService userDetailsService) {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();

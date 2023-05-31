@@ -1,19 +1,27 @@
 package io.charla.users.persistence.domain;
 
+import org.hibernate.validator.constraints.Length;
+
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 @Entity
 public class User {
     @Id
     @GeneratedValue
     private long Id;
-    @Email
+    @Email()
     @Column(unique = true)
     private String email;
     //pw validated in UserService
 //    @Size(min = 9, message = "some message")
+    @NotNull
+    @Length(min = 8)
+    @Length(max = 16)
+    @Pattern(regexp = "^(?=.*[A-Z])(?=.*[0-9]).*$", message = "Password must have length between 8 - 16 and contain at least one uppercase letter and one number")
     private String password;
     @Enumerated(EnumType.STRING)
     @NotNull
