@@ -13,6 +13,7 @@ public class User {
     @Column(unique = true)
     private String email;
     //pw validated in UserService
+//    @Size(min = 9, message = "some message")
     private String password;
     @Enumerated(EnumType.STRING)
     @NotNull
