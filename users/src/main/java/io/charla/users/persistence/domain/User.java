@@ -1,11 +1,10 @@
 package io.charla.users.persistence.domain;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import org.hibernate.validator.constraints.Length;
+
+import javax.persistence.*;
 import javax.validation.constraints.Email;
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Pattern;
 
 @Entity
 public class User {
@@ -16,10 +15,10 @@ public class User {
     @Email
     @Column(unique = true)
     private String email;
-    //TODO - validate
+    @Length(min = 9)
+    @Pattern(regexp = "^(?=.*[0-9])(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{9,}$")
     private String password;
-    //TODO - single choice and not empty - use enums?
-    @NotEmpty
+    @Enumerated(EnumType.STRING)
     private Role role;
 
     public User() {

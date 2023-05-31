@@ -2,10 +2,7 @@ package io.charla.users.communication.endpoint;
 
 import io.charla.users.logic.UserService;
 import io.charla.users.persistence.domain.User;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/users")
@@ -26,8 +23,8 @@ public class UserEndpoint {
         return "logged in successfully";
     }
 
-    @PostMapping("/signup")
-    User signUp(User user) {
+    @PostMapping
+    User signUp(@RequestBody User user) {
         return userService.signUp(user);
     }
 

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class UserService {
+
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     public UserService(PasswordEncoder passwordEncoder, UserRepository userRepository) {
@@ -22,6 +23,7 @@ public class UserService {
         } else {
             //TODO user should select role at front end from drop down box or something
             user.setRole(Role.ROLE_HOST);
+            System.out.println(user.getPassword());
             user.setPassword(passwordEncoder.encode(user.getPassword()));
             return userRepository.save(user);
         }
