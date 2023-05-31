@@ -9,3 +9,9 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+
+errorMessages:
+  tooShort: "password too short, must be at least 9 characters long\n"
+  noUpper: "must contain at least one upper case letter (A-Z)\n"
+  noLower: "must contain at least one lower case letter (a-z)\n"
+  noNumber: "must contain at least one number (1-9)\n"

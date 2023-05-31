@@ -14,8 +14,7 @@ public class UserEndpoint {
     }
 
 
-    //TODO - should we change req-mappings (and antMatchers)? should vis-mods be public or package?
-    //PostMapping instead of Get for security - discuss with Nichirvan
+    //TODO - should we change req-mappings (and antMatchers)? should vis-mods be public or package? PostMapping instead of Get for security - discuss with Nichirvan
     @GetMapping("/login") //   e.g. "/login"
 
     public String loginUser() {
@@ -23,7 +22,7 @@ public class UserEndpoint {
         return "logged in successfully";
     }
 
-    @PostMapping
+    @PostMapping //TODO - have open /signup
     User signUp(@RequestBody User user) {
         return userService.signUp(user);
     }

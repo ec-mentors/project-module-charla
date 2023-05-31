@@ -1,24 +1,21 @@
 package io.charla.users.persistence.domain;
 
-import org.hibernate.validator.constraints.Length;
-
 import javax.persistence.*;
 import javax.validation.constraints.Email;
-import javax.validation.constraints.Pattern;
+import javax.validation.constraints.NotNull;
 
 @Entity
 public class User {
-    //TODO - failure to launch app context - fields here?
     @Id
     @GeneratedValue
     private long Id;
     @Email
     @Column(unique = true)
     private String email;
-    @Length(min = 9)
-    @Pattern(regexp = "^(?=.*[0-9])(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{9,}$")
+    //pw validated in UserService
     private String password;
     @Enumerated(EnumType.STRING)
+    @NotNull
     private Role role;
 
     public User() {
