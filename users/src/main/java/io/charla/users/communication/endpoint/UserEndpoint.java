@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping
+@RequestMapping("/users")
 public class UserEndpoint {
     private final UserService userService;
 
@@ -16,14 +16,17 @@ public class UserEndpoint {
         this.userService = userService;
     }
 
+
     //TODO - should we change req-mappings (and antMatchers)? should vis-mods be public or package?
-    @GetMapping("/users") //   e.g. "/login"
+    //PostMapping instead of Get for security - discuss with Nichirvan
+    @GetMapping("/login") //   e.g. "/login"
+
     public String loginUser() {
 
         return "logged in successfully";
     }
 
-    @PostMapping("/users/signup")
+    @PostMapping("/signup")
     User signUp(User user) {
         return userService.signUp(user);
     }
