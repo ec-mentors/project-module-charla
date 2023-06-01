@@ -16,12 +16,10 @@ public class User {
     @Email()
     @Column(unique = true)
     private String email;
-    //pw validated in UserService
-//    @Size(min = 9, message = "some message")
+
     @NotNull
-    @Length(min = 8)
-    @Length(max = 16)
-    @Pattern(regexp = "^(?=.*[A-Z])(?=.*[0-9]).*$", message = "Password must have length between 8 - 16 and contain at least one uppercase letter and one number")
+    @Size(min = 9 , message = "Password must be minimum 9")
+    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?!.*\\s).*$", message = "Password must contain one Uppercase and one lowercase and no whitespaces")
     private String password;
     @Enumerated(EnumType.STRING)
     @NotNull
