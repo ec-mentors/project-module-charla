@@ -39,6 +39,9 @@ public class UserPrincipal implements UserDetails {
         return true;
     }
 
+    public long getUserId(){
+        return user.getId();
+    }
     @Override
     public boolean isAccountNonLocked() {
         return true;

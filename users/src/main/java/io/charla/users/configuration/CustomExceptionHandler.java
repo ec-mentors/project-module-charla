@@ -1,5 +1,8 @@
 package io.charla.users.configuration;
 
+import io.charla.users.exception.ForbiddenUserAccessException;
+import io.charla.users.exception.MandatoryPropertyException;
+import io.charla.users.exception.UserNotFoundException;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -12,7 +15,6 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
@@ -126,5 +128,37 @@ public class CustomExceptionHandler implements AuthenticationEntryPoint {
         }
     }
 
+    /**
+     * this will handel the custom ForbiddenUserAccessException (created by us)
+     * the ForbiddenUserAccessException will occur when a user try to edit or change another user profile
+     * @param e
+     * @return String message with 403 status code
+     */
+    @ExceptionHandler(ForbiddenUserAccessException.class)
+    public ResponseEntity<String> validUserAccess(Exception e){
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+    }
+
+    /**
+     * this will handel the custom UserNotFoundException (created by us)
+     * the UserNotFoundException will occur when a user with a specific id doesn't exist
+     * @param e
+     * @return String message with 404 status code
+     */
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<String> userNotFound(Exception e){
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+    }
+
+    /**
+     * this will handel the custom MandatoryPropertyException (created by us)
+     * the MandatoryPropertyException will occur when mandatory property is messing;
+     * @param e
+     * @return String message with 400 status code
+     */
+    @ExceptionHandler(MandatoryPropertyException.class)
+    public ResponseEntity<String> mandatoryProperty(Exception e){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    }
 
 }
