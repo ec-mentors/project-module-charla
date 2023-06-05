@@ -35,6 +35,8 @@ public class StandardUserService {
             if (standardUser.getCountry() == null) {
                 throw new RuntimeException("country mandatory");
             }
+            standardUser.setUser(user);
+            standardUser.setId(oStandardUser.get().getId());
             return standardUserRepository.save(standardUser);
         }
     }
