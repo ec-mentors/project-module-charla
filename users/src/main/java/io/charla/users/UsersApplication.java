@@ -11,3 +11,5 @@ public class UsersApplication {
 	}
 
 }
+
+// ToDo 1. put validation exception msg into customExceptionHandler class
