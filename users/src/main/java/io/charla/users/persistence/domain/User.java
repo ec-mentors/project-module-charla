@@ -1,7 +1,5 @@
 package io.charla.users.persistence.domain;
 
-import org.hibernate.validator.constraints.Length;
-
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
@@ -13,17 +11,47 @@ public class User {
     @Id
     @GeneratedValue
     private long Id;
+    @NotNull(message = "you must type \"email\":")
     @Email()
     @Column(unique = true)
     private String email;
 
-    @NotNull
+    @NotNull(message = "you must type \"password\":")
     @Size(min = 9 , message = "Password must be minimum 9")
-    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?!.*\\s).*$", message = "Password must contain one Uppercase and one lowercase and no whitespaces")
+    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?!.*\\s).*$", message = "Password must contain at least one lowercase letter, one uppercase letter, and one digit.")
     private String password;
     @Enumerated(EnumType.STRING)
-    @NotNull
+    @NotNull(message = "you must type \"role\":")
     private Role role;
+/*
+todo Enum should be capial letter,
+    @JsonProperty("Name"),
+  public String name,
+  remove unnecessary getter and setter
+
+
+ */
+
+    @Column(unique = true)
+    private String verificationCode;
+
+    private boolean verified;
+
+    public String getVerificationCode() {
+        return verificationCode;
+    }
+
+    public void setVerificationCode(String verificationCode) {
+        this.verificationCode = verificationCode;
+    }
+
+    public boolean isVerified() {
+        return verified;
+    }
+
+    public void setVerified(boolean verified) {
+        this.verified = verified;
+    }
 
     public User() {
     }

@@ -1,5 +1,6 @@
 package io.charla.users.security;
 
+
 import io.charla.users.configuration.CustomExceptionHandler;
 import io.charla.users.persistence.repository.UserRepository;
 import org.springframework.context.annotation.Bean;
@@ -7,22 +8,21 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
-
-import javax.servlet.http.HttpServletResponse;
-import java.io.PrintWriter;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 @Configuration
+@EnableWebSecurity
 public class SecurityConfig {
 
-    private final AuthenticationEntryPoint authenticationEntryPoint;
+    private final CustomExceptionHandler authenticationEntryPoint;
 
-    public SecurityConfig(AuthenticationEntryPoint authenticationEntryPoint) {
+    public SecurityConfig(CustomExceptionHandler authenticationEntryPoint) {
         this.authenticationEntryPoint = authenticationEntryPoint;
     }
 
@@ -33,12 +33,17 @@ public class SecurityConfig {
                 .cors().and().csrf().disable()
                 .authorizeRequests()
                 .antMatchers(HttpMethod.POST, "/users/signup").permitAll()
-                .anyRequest().authenticated()
+                .antMatchers(HttpMethod.GET, "/users/verify").permitAll()
+                .antMatchers(HttpMethod.POST, "/users/login","/users/login/").authenticated()
+                .anyRequest().permitAll()
                 .and()
                 .httpBasic()
                 .authenticationEntryPoint(authenticationEntryPoint);
+
         return http.build();
     }
+
+
 
 
     @Bean
