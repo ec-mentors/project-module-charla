@@ -20,7 +20,8 @@ spring:
     host: mail.gmx.net
     port: 587
     username: charla23@gmx.at
-    password: *
+    password: Sh2801zao37.F
+    #todo - protect password as environment variable
     properties:
       mail:
         smtp:

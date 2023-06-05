@@ -16,14 +16,28 @@ public class StandardUser {
     private User user;
 
     //TODO - what is meant by mandatory here, when editing or creating?
-
+    //@ManyToMany(fetch = FetchType.EAGER)
+    @ElementCollection
+    @CollectionTable(name = "languages", joinColumns = @JoinColumn(name = "id"))
+    @Column(name = "languages")
+    @Enumerated(EnumType.STRING)
+    //@JoinColumn(name = "parent", referencedColumnName = "id")
     private Set<Language> languages = new HashSet<>();
 
+    @ElementCollection
+    @CollectionTable(name = "user_topics", joinColumns = @JoinColumn(name = "id"))
+    @Column(name = "topic")
+    @Enumerated(EnumType.STRING)
+    //@ManyToMany(fetch = FetchType.EAGER)
     private Set<Topic> preferredTopics = new HashSet<>();
 
     private Country country;
     private City city;
 
+    @ElementCollection
+    @CollectionTable(name = "user_preferences", joinColumns = @JoinColumn(name = "id"))
+    @MapKeyColumn(name = "topic")
+    @Column(name = "preference")
     private Map<Topic, Integer> topicScoresMap = new HashMap<>();
 
     //Acceptance Criteria
