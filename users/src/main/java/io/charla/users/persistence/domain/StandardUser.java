@@ -31,7 +31,9 @@ public class StandardUser {
     //@ManyToMany(fetch = FetchType.EAGER)
     private Set<Topic> preferredTopics = new HashSet<>();
 
+    @Enumerated(EnumType.STRING)
     private Country country;
+    @Enumerated(EnumType.STRING)
     private City city;
 
     @ElementCollection
