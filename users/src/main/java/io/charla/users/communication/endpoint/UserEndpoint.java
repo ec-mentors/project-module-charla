@@ -2,15 +2,8 @@ package io.charla.users.communication.endpoint;
 
 import io.charla.users.logic.UserService;
 import io.charla.users.persistence.domain.User;
-import org.springframework.data.repository.query.Param;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
 
@@ -37,7 +30,6 @@ public class UserEndpoint {
 
     @GetMapping("/verify")
     public String verified(@RequestParam("code") String verificationCode) {
-
         return userService.getVerified(verificationCode);
     }
 

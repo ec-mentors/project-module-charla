@@ -1,11 +1,10 @@
 package io.charla.users.logic;
 
+import io.charla.users.persistence.domain.Role;
 import io.charla.users.persistence.domain.User;
 import io.charla.users.persistence.repository.UserRepository;
 import net.bytebuddy.utility.RandomString;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -15,11 +14,13 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
 
+    private final StandardUserService standardUserService;
     private final EmailSenderService emailSenderService;
 
-    public UserService(PasswordEncoder passwordEncoder, UserRepository userRepository, EmailSenderService emailSenderService) {
+    public UserService(PasswordEncoder passwordEncoder, UserRepository userRepository, StandardUserService standardUserService, EmailSenderService emailSenderService) {
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
+        this.standardUserService = standardUserService;
         this.emailSenderService = emailSenderService;
     }
 
@@ -62,11 +63,15 @@ public class UserService {
             userHere.setVerificationCode(null);
             userHere.setVerified(true);
             userRepository.save(userHere);
-
-            return "Congratulation you are now verified. You can no login";
+            assignUser(userHere);
+            return "Congratulation you are now verified. You can now login";
         }
     }
-
+    private void assignUser(User user) {
+        if (user.getRole().equals(Role.ROLE_USER)){
+            standardUserService.createStandardUser(user);
+        } //TODO other user types
+    }
 
     public String login() {
 

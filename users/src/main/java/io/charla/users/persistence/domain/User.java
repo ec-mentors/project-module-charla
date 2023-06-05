@@ -9,7 +9,7 @@ import javax.validation.constraints.Size;
 @Entity
 public class User {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long Id;
     @NotNull(message = "you must type \"email\":")
     @Email()
