@@ -1,6 +1,8 @@
 package io.charla.users.logic;
 
+import io.charla.users.communication.dto.TopicScoreDto;
 import io.charla.users.persistence.domain.StandardUser;
+import io.charla.users.persistence.domain.Topic;
 import io.charla.users.persistence.domain.User;
 import io.charla.users.persistence.repository.StandardUserRepository;
 import io.charla.users.persistence.repository.UserRepository;
@@ -37,6 +39,19 @@ public class StandardUserService {
             }
             standardUser.setUser(user);
             standardUser.setId(oStandardUser.get().getId());
+            return standardUserRepository.save(standardUser);
+        }
+    }
+    public StandardUser modifyOpinions(long userId, TopicScoreDto topicScoreDto) {
+        //TODO - prevent user being able to change others profile based on ID
+        var user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("user not found"));
+        var oStandardUser = standardUserRepository.findByUser(user);
+        if (oStandardUser.isEmpty()) {
+            throw new RuntimeException("not found");
+        } else {
+            int score = topicScoreDto.getAnswerOne() + topicScoreDto.getAnswerTwo() + topicScoreDto.getAnswerThree();
+            StandardUser standardUser = oStandardUser.get();
+            standardUser.addTopicScore(Topic.valueOf(topicScoreDto.getTopic()), score);
             return standardUserRepository.save(standardUser);
         }
     }
