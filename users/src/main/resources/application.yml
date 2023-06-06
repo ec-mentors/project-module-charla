@@ -17,7 +17,7 @@ spring:
       ddl-auto: update
 
   profiles:
-    active: application, custom-msg, email
+    active: application, custom, email, test
 
 
 

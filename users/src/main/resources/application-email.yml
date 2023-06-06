@@ -12,7 +12,6 @@ spring:
             enable: true
 
 
-
 email_not_sent: "failed to send email"
 
 sender: "charla23@gmx.at"

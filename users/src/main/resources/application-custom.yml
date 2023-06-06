@@ -1,5 +1,4 @@
 messages:
-
   custom_exception_handler:
     wrong_credentials: "Invalid username or password"
     not_verified: "User account not verified"

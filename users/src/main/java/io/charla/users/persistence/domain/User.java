@@ -23,7 +23,7 @@ public class User {
     @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?!.*\\s).*$", message ="${messages.user-validation.password_criteria}")
     private String password;
     @Enumerated(EnumType.STRING)
-    @NotNull(message = "${messages.user-validation.typo_role}")
+    @NotNull(message = "${messages.user-validation.typo-role}")
     private Role role;
 
     @Column(unique = true)
