@@ -1,0 +1,25 @@
+messages:
+
+  custom_exception_handler:
+    wrong_credentials: "Invalid username or password"
+    not_verified: "User account not verified"
+    login_without_credentials: "Authentication failed please enter your email and pass"
+    auth_enabled_no_endPoint: "Endpoint  does not exist! make sure you write it /users/login exactly"
+    no_endpoint: "No Such Endpoint"
+    typo_in_role: "Please make sure that you type either: \"ROLE_USER\" or \"ROLE_HOST\""
+
+  user_validation:
+    typo_email: "you must type \"email\":"
+    typo_password: "you must type \"password\":"
+    typo_role: "you must type \"role\":"
+    password_length: "Password must be minimum 9"
+    password_criteria:  "Password must contain at least one lowercase letter, one uppercase letter, and one digit."
+
+
+  user_service:
+    already_linked: "Email address already linked to an account"
+    already_verified: "you account is already verified"
+    verification_sent: "Email has been sent to your email for verification"
+    invalid_code: "Invalid Verification code or already used"
+    account_verified: "Congratulation you are now verified. You can now login"
+    logged_in: "Finally you are logged in now"

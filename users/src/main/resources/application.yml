@@ -37,3 +37,6 @@ messages:
     auth_wrong_endPoint: "Endpoint  does not exist! make sure you write it /users/login exactly"
     without_auth_wrong_endpoint: "No Such Endpoint"
     typo_in_role: "Please make sure that you type either: \"ROLE_USER\" or \"ROLE_HOST\""
+
+  profiles:
+    active: application, custom-msg, email
