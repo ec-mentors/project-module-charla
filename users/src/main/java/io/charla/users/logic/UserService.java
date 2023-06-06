@@ -1,6 +1,6 @@
 package io.charla.users.logic;
 
-import io.charla.users.persistence.domain.Role;
+import io.charla.users.persistence.domain.enums.Role;
 import io.charla.users.persistence.domain.User;
 import io.charla.users.persistence.repository.UserRepository;
 import lombok.AccessLevel;
@@ -18,16 +18,18 @@ public class UserService {
 
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
-
-
     private final StandardUserService standardUserService;
     private final EmailSenderService emailSenderService;
-  @Setter(AccessLevel.PACKAGE)
+    @Setter(AccessLevel.PACKAGE)
     private String alreadyLinked, verificationSent, invalidCode, accountVerified, loggedIn, already_verified;
+
+
     public UserService(PasswordEncoder passwordEncoder, UserRepository userRepository, StandardUserService standardUserService, EmailSenderService emailSenderService) {
-
-    private final EmailSenderService emailSenderService;
-
+        this.passwordEncoder = passwordEncoder;
+        this.userRepository = userRepository;
+        this.standardUserService = standardUserService;
+        this.emailSenderService = emailSenderService;
+    }
 
     public String signUp(User user) {
         if (userRepository.existsByEmail(user.getEmail())) {
@@ -69,9 +71,6 @@ public class UserService {
             userHere.setVerified(true);
             userRepository.save(userHere);
             assignUser(userHere);
-            //return "Congratulation you are now verified. You can now login";
-
-
             return accountVerified;
 
         }

@@ -23,3 +23,7 @@ messages:
     invalid_code: "Invalid Verification code or already used"
     account_verified: "Congratulation you are now verified. You can now login"
     logged_in: "Finally you are logged in now"
+
+  Topic_Score_Dto:
+    mandatory_topic: "topic is mandatory"
+    range_limit: "answerOne must be between 0 and 4"

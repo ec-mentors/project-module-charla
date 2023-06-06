@@ -30,7 +30,6 @@ public class UserPrincipal implements UserDetails {
 
     @Override
     public String getUsername() {
-        //TODO - clarify with q on slack
         return user.getEmail();
     }
 

@@ -1,17 +1,16 @@
 package io.charla.users.logic;
 
+
 import io.charla.users.communication.dto.TopicScoreDto;
 import io.charla.users.exception.MandatoryPropertyException;
 import io.charla.users.exception.UserNotFoundException;
 import io.charla.users.persistence.domain.StandardUser;
-import io.charla.users.persistence.domain.Topic;
 import io.charla.users.persistence.domain.User;
+import io.charla.users.persistence.domain.enums.Topic;
 import io.charla.users.persistence.repository.StandardUserRepository;
 import io.charla.users.persistence.repository.UserRepository;
 import io.charla.users.security.ValidUserAccess;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 public class StandardUserService {

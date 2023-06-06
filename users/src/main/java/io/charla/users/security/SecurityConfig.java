@@ -33,9 +33,7 @@ public class SecurityConfig {
                 .authorizeRequests()
                 .antMatchers(HttpMethod.POST, "/users/signup").permitAll()
                 .antMatchers(HttpMethod.GET, "/users/verify").permitAll()
-                .antMatchers(HttpMethod.POST, "/users/login","/users/login/").authenticated()
-                //.antMatchers( "/us").
-                .anyRequest().permitAll()
+                .anyRequest().authenticated()
                 .and()
                 .httpBasic()
                 .authenticationEntryPoint(authenticationEntryPoint);

@@ -33,11 +33,4 @@ public class UserEndpoint {
         return userService.getVerified(verificationCode);
     }
 
-
-
-
-
-//  TODO  Entrypoint is fot any path it should be only for login path ,hide id when signing up , should we use enum or list of authorities , use manual password critira check instead of regex
-
-
 }

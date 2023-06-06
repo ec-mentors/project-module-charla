@@ -1,5 +1,11 @@
 package io.charla.users.persistence.domain;
 
+
+import io.charla.users.persistence.domain.enums.City;
+import io.charla.users.persistence.domain.enums.Country;
+import io.charla.users.persistence.domain.enums.Language;
+import io.charla.users.persistence.domain.enums.Topic;
+
 import javax.persistence.*;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -15,8 +21,6 @@ public class StandardUser {
     @OneToOne
     private User user;
 
-    //TODO - what is meant by mandatory here, when editing or creating?
-    //@ManyToMany(fetch = FetchType.EAGER)
     @ElementCollection
     @CollectionTable(name = "languages", joinColumns = @JoinColumn(name = "id"))
     @Column(name = "languages")
@@ -41,13 +45,6 @@ public class StandardUser {
     @MapKeyColumn(name = "topic")
     @Column(name = "preference")
     private Map<Topic, Integer> topicScoresMap = new HashMap<>();
-
-    //Acceptance Criteria
-
-    //User sees in the beginning his profile data
-    //If any mandatory field is empty an error is thrown and saving is not possible
-    //If all mandatory fields are filled out the data is stored in the DB
-
 
     public StandardUser() {
     }

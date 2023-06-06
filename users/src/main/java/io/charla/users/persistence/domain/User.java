@@ -1,5 +1,7 @@
 package io.charla.users.persistence.domain;
 
+import io.charla.users.persistence.domain.enums.Role;
+
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
@@ -23,14 +25,6 @@ public class User {
     @Enumerated(EnumType.STRING)
     @NotNull(message = "${messages.user-validation.typo_role}")
     private Role role;
-/*
-todo Enum should be capial letter,
-    @JsonProperty("Name"),
-  public String name,
-  remove unnecessary getter and setter,
-  we should create another yaml file for error msg
-
- */
 
     @Column(unique = true)
     private String verificationCode;

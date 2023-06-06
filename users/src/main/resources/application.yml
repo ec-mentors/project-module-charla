@@ -9,34 +9,15 @@ spring:
       add-mappings: false
 
   datasource:
-    url: jdbc:mysql://localhost/humanTalk?useSSL=false
+    url: jdbc:mysql://192.168.99.100/humanTalk?useSSL=false
     username: root
     password: root
   jpa:
     hibernate:
       ddl-auto: update
 
-  mail:
-    host: mail.gmx.net
-    port: 587
-    username: charla23@gmx.at
-    password: Sh2801zao37.F
-    #todo - protect password as environment variable
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
-
-messages:
-  error-messages:
-    wrong_credentials: "Invalid username or password"
-    not_verified: "User account not verified"
-    sign_without_credentials: "Authentication failed please enter your email and pass"
-    auth_wrong_endPoint: "Endpoint  does not exist! make sure you write it /users/login exactly"
-    without_auth_wrong_endpoint: "No Such Endpoint"
-    typo_in_role: "Please make sure that you type either: \"ROLE_USER\" or \"ROLE_HOST\""
-
   profiles:
     active: application, custom-msg, email
+
+
+
