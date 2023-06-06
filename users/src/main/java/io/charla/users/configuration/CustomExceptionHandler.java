@@ -1,5 +1,7 @@
 package io.charla.users.configuration;
 
+import lombok.AccessLevel;
+import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -12,7 +14,6 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
@@ -24,17 +25,12 @@ import java.io.UnsupportedEncodingException;
 import java.util.Objects;
 
 
-@ConfigurationProperties(prefix = "messages.error-messages")
+@Setter(AccessLevel.PACKAGE)
+@ConfigurationProperties("messages.custom-exception-handler")
 @RestControllerAdvice
 public class CustomExceptionHandler implements AuthenticationEntryPoint {
 
-    private String wrong_credentials;
-    private String not_verified;
-
-    private String sign_without_credentials;
-    private String auth_wrong_endPoint;
-    private String without_auth_wrong_endpoint;
-    private String typo_in_role;
+    private String wrongCredentials, notVerified, loginWithoutCredentials, authEnabledNoEndPoint, noEndpoint, typoInRole;
 
 
     /**
@@ -63,14 +59,14 @@ public class CustomExceptionHandler implements AuthenticationEntryPoint {
 
         if (request.getRequestURI().equals("/users/login") || request.getRequestURI().equals("/users/login/")) {
             if (authException instanceof BadCredentialsException) {
-                errorMessage = "Invalid username or password";
+                errorMessage = wrongCredentials;
             } else if (authException instanceof DisabledException) {
-                errorMessage = "User account not verified";
+                errorMessage = notVerified;
             } else {
-                errorMessage = "Authentication failed please enter your email and pass";
+                errorMessage = loginWithoutCredentials;
             }
         } else {
-            errorMessage = "Endpoint  does not exist! make sure you write it /users/login exactly";
+            errorMessage = authEnabledNoEndPoint;
         }
 
         response.setContentType(MediaType.TEXT_PLAIN_VALUE);
@@ -92,7 +88,7 @@ public class CustomExceptionHandler implements AuthenticationEntryPoint {
 
     @ExceptionHandler(NoHandlerFoundException.class)
     public ResponseEntity<String> handleNotFoundError(NoHandlerFoundException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No Such Endpoint");
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(noEndpoint);
     }
 
 
@@ -111,7 +107,7 @@ public class CustomExceptionHandler implements AuthenticationEntryPoint {
 
 
     /**
-     * custom msg for both validation and email uniqueness and enum
+     * custom msg for both validation and email uniqueness and enum role typo
      */
 
     @ExceptionHandler({DataIntegrityViolationException.class, MethodArgumentNotValidException.class, HttpMessageNotReadableException.class})
@@ -122,7 +118,7 @@ public class CustomExceptionHandler implements AuthenticationEntryPoint {
         } else if (ex instanceof MethodArgumentNotValidException) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Objects.requireNonNull(((MethodArgumentNotValidException) ex).getFieldError()).getDefaultMessage());
         } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Please make sure that you type either: \"ROLE_USER\" or \"ROLE_HOST\"");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
         }
     }
 

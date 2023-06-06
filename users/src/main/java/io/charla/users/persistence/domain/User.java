@@ -11,24 +11,24 @@ public class User {
     @Id
     @GeneratedValue
     private long Id;
-    @NotNull(message = "you must type \"email\":")
+    @NotNull(message = "${messages.user-validation.typo-email}")
     @Email()
     @Column(unique = true)
     private String email;
 
-    @NotNull(message = "you must type \"password\":")
-    @Size(min = 9 , message = "Password must be minimum 9")
-    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?!.*\\s).*$", message = "Password must contain at least one lowercase letter, one uppercase letter, and one digit.")
+    @NotNull(message = "${messages.user-validation.typo-password}")
+    @Size(min = 9 , message = "${messages.user-validation.password-length}")
+    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?!.*\\s).*$", message ="${messages.user-validation.password_criteria}")
     private String password;
     @Enumerated(EnumType.STRING)
-    @NotNull(message = "you must type \"role\":")
+    @NotNull(message = "${messages.user-validation.typo_role}")
     private Role role;
 /*
 todo Enum should be capial letter,
     @JsonProperty("Name"),
   public String name,
-  remove unnecessary getter and setter
-
+  remove unnecessary getter and setter,
+  we should create another yaml file for error msg
 
  */
 

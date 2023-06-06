@@ -2,20 +2,25 @@ package io.charla.users.logic;
 
 import io.charla.users.persistence.domain.User;
 import io.charla.users.persistence.repository.UserRepository;
+import lombok.AccessLevel;
+import lombok.Setter;
 import net.bytebuddy.utility.RandomString;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+
+@ConfigurationProperties("messages.user-service")
 @Service
 public class UserService {
 
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
-
     private final EmailSenderService emailSenderService;
+
+    @Setter(AccessLevel.PACKAGE)
+    private String alreadyLinked, verificationSent, invalidCode, accountVerified, loggedIn, already_verified;
 
     public UserService(PasswordEncoder passwordEncoder, UserRepository userRepository, EmailSenderService emailSenderService) {
         this.passwordEncoder = passwordEncoder;
@@ -25,7 +30,7 @@ public class UserService {
 
     public String signUp(User user) {
         if (userRepository.existsByEmail(user.getEmail())) {
-            throw new DataIntegrityViolationException("Email address already linked to an account");
+            throw new DataIntegrityViolationException(alreadyLinked);
         } else {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
 
@@ -47,30 +52,30 @@ public class UserService {
             emailSenderService.SendVerificationCode(UserWithoutVerification);
 
 
-            return "Email has been sent to your email for verification";
+            return verificationSent;
         }
     }
 
 
     public String getVerified(String verificationCode) {
 
-        User userHere = userRepository.findByVerificationCode(verificationCode).orElseThrow(() -> new IllegalArgumentException("Invalid" + "\u200A" + " Verification code or expired"));
+        User userHere = userRepository.findByVerificationCode(verificationCode).orElseThrow(() -> new IllegalArgumentException(invalidCode));
         //TODO I dont think we need if here
         if (userHere.isVerified()) {
-            return "already verified";
+            return already_verified;
         } else {
             userHere.setVerificationCode(null);
             userHere.setVerified(true);
             userRepository.save(userHere);
 
-            return "Congratulation you are now verified. You can no login";
+            return accountVerified;
         }
     }
 
 
     public String login() {
 
-        return "Finally you are logged in now";
+        return loggedIn;
 
     }
 
