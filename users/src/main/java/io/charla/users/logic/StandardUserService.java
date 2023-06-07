@@ -37,10 +37,10 @@ public class StandardUserService {
         validUserAccess.isValidUserAccess(userId);
         
         if (standardUser.getLanguages().isEmpty()) {
-            throw new MandatoryPropertyException("languages mandatory");
+            throw new MandatoryPropertyException("key \"languages:\" is mandatory");
         }
         if (standardUser.getCountry() == null) {
-            throw new MandatoryPropertyException("country mandatory");
+            throw new MandatoryPropertyException("key \"country:\" is mandatory");
         }
         standardUser.setUser(getUser(userId));
         standardUser.setId(getStandardUserByUserId(userId).getId());

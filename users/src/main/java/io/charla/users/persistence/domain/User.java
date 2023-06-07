@@ -13,17 +13,17 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long Id;
-    @NotNull(message = "${messages.user-validation.typo-email}")
+    @NotNull(message = "{user.typo_email}")
     @Email()
     @Column(unique = true)
     private String email;
 
-    @NotNull(message = "${messages.user-validation.typo-password}")
-    @Size(min = 9, message = "${messages.user-validation.password_length}")
-    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?!.*\\s).*$", message = "${messages.user-validation.password-criteria}")
+    @NotNull(message = "{user.typo_password}")
+    @Size(min = 9, message = "{user.password_length}")
+    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?!.*\\s).*$", message = "{user.password_criteria}")
     private String password;
     @Enumerated(EnumType.STRING)
-    @NotNull(message = "${messages.user-validation.typo-role}")
+    @NotNull(message = "{user.typo_role}")
     private Role role;
 
     @Column(unique = true)

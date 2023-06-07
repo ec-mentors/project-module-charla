@@ -7,7 +7,8 @@ import io.charla.users.persistence.domain.enums.Language;
 import io.charla.users.persistence.domain.enums.Topic;
 
 import javax.persistence.*;
-import java.util.HashMap;
+import javax.validation.constraints.Pattern;
+;import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -20,7 +21,7 @@ public class StandardUser {
 
     @OneToOne
     private User user;
-
+//todo customiz enum deserlization error msg
     @ElementCollection
     @CollectionTable(name = "languages", joinColumns = @JoinColumn(name = "id"))
     @Column(name = "languages")

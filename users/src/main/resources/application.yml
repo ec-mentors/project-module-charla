@@ -17,7 +17,4 @@ spring:
       ddl-auto: update
 
   profiles:
-    active: application, email, custom-msg
-
-
-
+    active: application, email, custom-exception-msg

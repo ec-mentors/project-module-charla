@@ -4,13 +4,13 @@ import org.hibernate.validator.constraints.Range;
 import javax.validation.constraints.NotNull;
 
 public class TopicScoreDto {
-    @NotNull(message = "${messages.Topic_Score_Dto.mandatory_topic}")
+    @NotNull(message = "{topicScoreDto.mandatory_topic}")
     private String topic;
-    @Range(min = 0, max = 4 , message = "${messages.Topic_Score_Dto.range_limit}")
+    @Range(min = 0, max = 4 , message = "{topicScoreDto.range_limit}")
     private int answerOne;
-    @Range(min = 0, max = 4, message = "${messages.Topic_Score_Dto.range_limit}")
+    @Range(min = 0, max = 4, message = "{topicScoreDto.range_limit}")
     private int answerTwo;
-    @Range(min = 0, max = 4, message = "${messages.Topic_Score_Dto.range_limit}")
+    @Range(min = 0, max = 4, message = "{topicScoreDto.range_limit}")
     private int answerThree;
 
     public TopicScoreDto() {

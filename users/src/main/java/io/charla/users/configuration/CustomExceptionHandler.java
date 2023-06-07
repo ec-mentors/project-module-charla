@@ -7,6 +7,7 @@ import lombok.AccessLevel;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -56,11 +57,36 @@ public class CustomExceptionHandler implements AuthenticationEntryPoint {
      * 4. when the User go to wrong endpoint or non-existence endpoint // because Spring security restrict access all over the app, so we had to handle non-existence endpoint here two. we have also handled non-existence endpoint without spring security. See down there
      */
 
+//    @Override
+//    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException {
+//        String errorMessage;
+//
+//        if (request.getRequestURI().equals("/users/login") || request.getRequestURI().equals("/users/login/")
+//                || request.getRequestURI().equals("/standard-users/add-score/2")
+//        ) {
+//            if (authException instanceof BadCredentialsException) {
+//                errorMessage = wrongCredentials;
+//            } else if (authException instanceof DisabledException) {
+//                errorMessage = notVerified;
+//            } else {
+//                errorMessage = loginWithoutCredentials;
+//            }
+//        } else {
+//            errorMessage = authEnabledNoEndPoint;
+//        }
+//
+//        response.setContentType(MediaType.TEXT_PLAIN_VALUE);
+//        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+//        response.getWriter().write(errorMessage);
+//    }
+//todo if user try to access non exist endpoint with wrong credential his password is saved
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException {
         String errorMessage;
+        String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+        if (authorizationHeader != null && authorizationHeader.startsWith("Basic ")
 
-        if (request.getRequestURI().equals("/users/login") || request.getRequestURI().equals("/users/login/")) {
+        ) {
             if (authException instanceof BadCredentialsException) {
                 errorMessage = wrongCredentials;
             } else if (authException instanceof DisabledException) {
@@ -158,4 +184,9 @@ public class CustomExceptionHandler implements AuthenticationEntryPoint {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
     }
 
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<String> testAll(Exception e){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("workd");
+    }
 }
