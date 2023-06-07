@@ -1,12 +1,12 @@
 package io.charla.users.persistence.domain;
 
 import io.charla.users.persistence.domain.enums.Role;
-
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+
 
 @Entity
 public class User {
@@ -19,8 +19,8 @@ public class User {
     private String email;
 
     @NotNull(message = "${messages.user-validation.typo-password}")
-    @Size(min = 9 , message = "${messages.user-validation.password-length}")
-    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?!.*\\s).*$", message ="${messages.user-validation.password_criteria}")
+    @Size(min = 9, message = "${messages.user-validation.password_length}")
+    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?!.*\\s).*$", message = "${messages.user-validation.password-criteria}")
     private String password;
     @Enumerated(EnumType.STRING)
     @NotNull(message = "${messages.user-validation.typo-role}")
@@ -30,6 +30,15 @@ public class User {
     private String verificationCode;
 
     private boolean verified;
+
+    public User() {
+    }
+
+    public User(String email, String password, Role role) {
+        this.email = email;
+        this.password = password;
+        this.role = role;
+    }
 
     public String getVerificationCode() {
         return verificationCode;
@@ -47,14 +56,6 @@ public class User {
         this.verified = verified;
     }
 
-    public User() {
-    }
-
-    public User(String email, String password, Role role) {
-        this.email = email;
-        this.password = password;
-        this.role = role;
-    }
 
     public long getId() {
         return Id;
