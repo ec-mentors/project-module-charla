@@ -35,7 +35,7 @@ public class StandardUserService {
     public StandardUser editProfile(StandardUser standardUser, long userId) {
         //Done - prevent users being able to change others' profiles based on Id
         validUserAccess.isValidUserAccess(userId);
-        
+        //todo Should be replaced with validation, @NotEmpty can achieve same effect
         if (standardUser.getLanguages().isEmpty()) {
             throw new MandatoryPropertyException("key \"languages:\" is mandatory");
         }

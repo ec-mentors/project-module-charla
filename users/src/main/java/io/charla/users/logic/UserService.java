@@ -19,15 +19,17 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final StandardUserService standardUserService;
-    private final EmailSenderService emailSenderService;
+    private final HostUserService hostUserService;
+    private final EmailSenderServices emailSenderService;
     @Setter(AccessLevel.PACKAGE)
     private String alreadyLinked, verificationSent, invalidCode, accountVerified, loggedIn, already_verified;
 
 
-    public UserService(PasswordEncoder passwordEncoder, UserRepository userRepository, StandardUserService standardUserService, EmailSenderService emailSenderService) {
+    public UserService(PasswordEncoder passwordEncoder, UserRepository userRepository, StandardUserService standardUserService, HostUserService hostUserService, EmailSenderServices emailSenderService) {
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
         this.standardUserService = standardUserService;
+        this.hostUserService = hostUserService;
         this.emailSenderService = emailSenderService;
     }
 
@@ -75,10 +77,32 @@ public class UserService {
 
         }
     }
+
+
+    public String approveProfileEdit(String verificationCode) {
+
+        User userHere = userRepository.findByVerificationCode(verificationCode).orElseThrow(() -> new IllegalArgumentException(invalidCode));
+        //TODO I dont think we need if here
+        if (userHere.isVerified()) {
+            return already_verified;
+        } else {
+            userHere.setVerificationCode(null);
+            userHere.setVerified(true);
+            userRepository.save(userHere);
+            return accountVerified;
+
+        }
+    }
+
+
     private void assignUser(User user) {
         if (user.getRole().equals(Role.ROLE_USER)){
             standardUserService.createStandardUser(user);
-        } //TODO other user types
+        }else { //TODO other user types
+
+            // to create User creation (factory method) here
+            hostUserService.createStandardUser(user);
+        }
     }
 
     public String login() {

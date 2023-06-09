@@ -1,26 +1,23 @@
 package io.charla.users.logic;
 
 import io.charla.users.persistence.domain.User;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.ApplicationRunner;
-import org.springframework.context.annotation.Bean;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
-import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.*;
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.util.Collections;
 
 
 @Service
-public class EmailSenderService {
+public class EmailSenderServicesHost {
 
 
     private final JavaMailSender mailSender;
@@ -29,12 +26,12 @@ public class EmailSenderService {
     private String emailContent;
     private final String sender, senderName, subject;
 
-    public EmailSenderService(JavaMailSender mailSender,
-                              @Value("${email-not-sent}") String emailNotSent,
-                              @Value("${sender}")  String sender,
-                              @Value("${sender-name}") String senderName,
-                              @Value("${subject}") String subject,
-                              @Value("${email-content}") String emailContent) {
+    public EmailSenderServicesHost(JavaMailSender mailSender,
+                                   @Value("${email-not-sent}") String emailNotSent,
+                                   @Value("${sender}")  String sender,
+                                   @Value("${sender-name}") String senderName,
+                                   @Value("${subject}") String subject,
+                                   @Value("${email-content}") String emailContent) {
         this.mailSender = mailSender;
         this.emailNotSent = emailNotSent;
         this.sender = sender;
@@ -64,7 +61,7 @@ public class EmailSenderService {
 
         //String urlWithCode=  "http://localhost:9001/users"+"/verify?code="+user.getVerificationCode();
 
-        String urlWithCode = "http://" + getIp() + ":9001/users" + "/verify?code=" + user.getVerificationCode();
+        String urlWithCode = "http://" + getIp() + ":9001/host-users" + "/verify-edit-profile?code=" + user.getVerificationCode();
 
 
         emailContent = emailContent.replace("{urlWithCode}", urlWithCode);

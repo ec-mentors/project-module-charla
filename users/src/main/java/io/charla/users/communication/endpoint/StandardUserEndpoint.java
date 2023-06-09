@@ -16,7 +16,7 @@ public class StandardUserEndpoint {
     public StandardUserEndpoint(StandardUserService standardUserService) {
         this.standardUserService = standardUserService;
     }
-
+//todo modify edit-profile to edit-profiles and add scores
     @PutMapping("/edit-profile/{id}")
     @Secured("ROLE_USER")
     StandardUser editProfile(@RequestBody StandardUser standardUser, @PathVariable long id) {

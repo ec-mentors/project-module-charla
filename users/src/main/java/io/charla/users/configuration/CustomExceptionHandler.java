@@ -187,6 +187,6 @@ public class CustomExceptionHandler implements AuthenticationEntryPoint {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> testAll(Exception e){
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("workd");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
     }
 }

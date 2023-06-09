@@ -12,5 +12,5 @@ messages:
     already_verified: "you account is already verified"
     verification_sent: "Email has been sent to your email for verification"
     invalid_code: "Invalid Verification code or already used"
-    account_verified: "Congratulation you are now verified. You can now login"
+    account_verified: "<h1 style=\"color:#db1818; text-align:center;\">Congratulations, you are now verified!"
     logged_in: "Finally you are logged in now"
