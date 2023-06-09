@@ -52,6 +52,11 @@ public class User {
         return verified;
     }
 
+    @Override
+    public String toString() {
+        return "email: " + email;
+    }
+
     public void setVerified(boolean verified) {
         this.verified = verified;
     }

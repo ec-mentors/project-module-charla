@@ -1,10 +1,8 @@
 package io.charla.users.communication.endpoint;
 
 import io.charla.users.communication.dto.HostDto;
-import io.charla.users.exception.UserNotFoundException;
 import io.charla.users.logic.HostUserService;
 import io.charla.users.logic.UserService;
-import io.charla.users.persistence.domain.HostUser;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +24,7 @@ public class HostUserEndpoint {
 //todo Sandra taught us to throw exception here, our service code should return optional
     // use validation
 
-    @PutMapping("/edit-profiles/{id}")
+    @PutMapping("/edit-profile/{id}")
     @Secured("ROLE_HOST")
     public String updateHostProfile(@Valid @RequestBody HostDto hostDto, @PathVariable Long id) {
 
@@ -34,11 +32,10 @@ public class HostUserEndpoint {
     }
 
 
-    @GetMapping("/get-profiles/{id}")
-    public void getHostProfileData(@PathVariable Long id) {
+    @GetMapping("/get-profile/{id}")
+    public String getHostProfileData(@PathVariable Long id) {
 
-        hostUserService.retrieveHostProfileInfo(id).orElseThrow(() -> new UserNotFoundException("User not found"));
-
+        return hostUserService.retrieveHostProfileInfo(id);
     }
 
 

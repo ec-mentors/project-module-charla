@@ -6,7 +6,6 @@ import io.charla.users.persistence.domain.User;
 import io.charla.users.persistence.repository.HostUserRepository;
 import io.charla.users.persistence.repository.UserRepository;
 import io.charla.users.security.ValidUserAccess;
-import net.bytebuddy.utility.RandomString;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -74,10 +73,10 @@ private final UserRepository userRepository;
 
 
 
-    public Optional<HostUser> retrieveHostProfileInfo(Long id) {
+    public String retrieveHostProfileInfo(Long id) {
         User foundUser = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
-
-      return   hostUserRepository.findByUser(foundUser);
+        HostUser host = hostUserRepository.findByUser(foundUser).orElseThrow(() -> new RuntimeException("User is not a host"));
+        return host.toString();
     }
 
 
