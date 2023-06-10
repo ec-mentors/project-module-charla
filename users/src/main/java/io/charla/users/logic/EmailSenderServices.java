@@ -60,8 +60,7 @@ public class EmailSenderServices {
 
         String urlWithCode = "http://" + getIp() + ":9001/users" + "/verify?code=" + user.getVerificationCode();
 
-
-        emailContent = emailContent.replace("{urlWithCode}", urlWithCode);
+        String newEmailContent = emailContent.replace("{urlWithCode}", urlWithCode);
 
 
         try {
@@ -75,7 +74,8 @@ public class EmailSenderServices {
 
             helper.setSubject(subject);
 
-            helper.setText(emailContent, true);
+            helper.setText(newEmailContent, true);
+
 
             mailSender.send(mimeMessage);
 

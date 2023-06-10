@@ -52,9 +52,9 @@ public class UserService {
             user.setVerificationCode(verificationCode);
 
 
-            User UserWithoutVerification = userRepository.save(user);
+            User userWithoutVerification = userRepository.save(user);
 
-            emailSenderService.SendVerificationCode(UserWithoutVerification);
+            emailSenderService.SendVerificationCode(userWithoutVerification);
 
 
             return verificationSent;

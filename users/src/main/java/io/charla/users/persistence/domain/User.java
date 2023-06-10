@@ -52,11 +52,6 @@ public class User {
         return verified;
     }
 
-    @Override
-    public String toString() {
-        return "email: " + email;
-    }
-
     public void setVerified(boolean verified) {
         this.verified = verified;
     }
@@ -92,5 +87,17 @@ public class User {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "Id=" + Id +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", role=" + role +
+                ", verificationCode='" + verificationCode + '\'' +
+                ", verified=" + verified +
+                '}';
     }
 }
