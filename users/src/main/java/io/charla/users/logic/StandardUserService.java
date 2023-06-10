@@ -33,7 +33,7 @@ public class StandardUserService {
     }
 
     public StandardUser editProfile(StandardUser standardUser, long userId) {
-        //Done - prevent users being able to change others' profiles based on Id
+
         validUserAccess.isValidUserAccess(userId);
         //todo Should be replaced with validation, @NotEmpty can achieve same effect
         if (standardUser.getLanguages().isEmpty()) {
@@ -48,9 +48,9 @@ public class StandardUserService {
         
     }
     public StandardUser modifyOpinions(long userId, TopicScoreDto topicScoreDto) {
-        //Done - prevent user being able to change others profile based on ID#
+
         validUserAccess.isValidUserAccess(userId);
-        
+
         int score = topicScoreDto.getAnswerOne() + topicScoreDto.getAnswerTwo() + topicScoreDto.getAnswerThree();
         StandardUser standardUser = getStandardUserByUserId(userId);
         standardUser.addTopicScore(Topic.valueOf(topicScoreDto.getTopic()), score);

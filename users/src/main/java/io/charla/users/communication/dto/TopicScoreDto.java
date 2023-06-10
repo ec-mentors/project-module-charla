@@ -6,12 +6,15 @@ import javax.validation.constraints.NotNull;
 public class TopicScoreDto {
     @NotNull(message = "{topicScoreDto.mandatory_topic}")
     private String topic;
+    @NotNull(message = "{topicScoreDto.answerOne_null}")
     @Range(min = 0, max = 4 , message = "{topicScoreDto.range_limit}")
-    private int answerOne;
+    private Integer answerOne;
+    @NotNull(message = "{topicScoreDto.answerTwo_null}")
     @Range(min = 0, max = 4, message = "{topicScoreDto.range_limit}")
-    private int answerTwo;
+    private Integer answerTwo;
+    @NotNull(message = "{topicScoreDto.answerThree_null}")
     @Range(min = 0, max = 4, message = "{topicScoreDto.range_limit}")
-    private int answerThree;
+    private Integer answerThree;
 
     public TopicScoreDto() {
     }
@@ -53,5 +56,15 @@ public class TopicScoreDto {
 
     public void setAnswerThree(int answerThree) {
         this.answerThree = answerThree;
+    }
+
+    @Override
+    public String toString() {
+        return "TopicScoreDto{" +
+                "topic='" + topic + '\'' +
+                ", answerOne=" + answerOne +
+                ", answerTwo=" + answerTwo +
+                ", answerThree=" + answerThree +
+                '}';
     }
 }
