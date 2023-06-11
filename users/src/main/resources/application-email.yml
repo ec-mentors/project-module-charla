@@ -38,3 +38,25 @@ email_content: |
           <p>Charla Team</p>
           </div>
           </body>
+
+new_email_content: |
+          <style>
+          body{font-family:Arial,sans-serif;background:#f2f2f2;padding:20px}
+          .container{position:relative;max-width:400px;margin:0 auto;background:#fff;padding:20px;border-radius:5px;box-shadow:0 2px 4px rgba(0,0,0,.1)}
+          .container::before,.container::after{content:'';position:absolute;width:100px;height:100px;background:#eaeaea;border-radius:50%;opacity:.3}
+          .container::before{top:-50px;left:-50px}
+          .container::after{bottom:-50px;right:-50px}
+          h3{color:#007bff;margin:0 0 20px}
+          a{color:#fff;text-decoration:none;background:#007bff;padding:7px 15px;border-radius:5px}
+          a:hover{background:#7b9fc6}
+          </style>
+          <body>
+          <div class="container">
+          <p>Dear <strong>HumanTalk</strong> subscriber,</p>
+          <p>You are trying to change your email from:{old_email} to:{new_email}.</P>
+          <p>Please click the button below to verify your new email:</p>
+          <h5><a href="{urlWithCode}" target="_self">VERIFY</a></h5>
+          <p>Thank you,</p>
+          <p>Charla Team</p>
+          </div>
+          </body>

@@ -33,4 +33,9 @@ public class UserEndpoint {
         return userService.getVerified(verificationCode);
     }
 
+    @GetMapping("/verify-new-email")
+    public String verifyNewEmail(@RequestParam("code") String verificationCode){
+        return userService.getNewEmailVerified(verificationCode);
+    }
+
 }

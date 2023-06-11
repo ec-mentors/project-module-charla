@@ -1,6 +1,8 @@
 package io.charla.users.logic;
 
+import io.charla.users.communication.dto.ChangeEmailDto;
 import io.charla.users.communication.dto.ChangePasswordDto;
+import io.charla.users.exception.PasswordException;
 import io.charla.users.exception.UserNotFoundException;
 import io.charla.users.persistence.domain.enums.Role;
 import io.charla.users.persistence.domain.User;
@@ -27,7 +29,18 @@ public class UserService {
 
     private final ValidUserAccess validUserAccess;
     @Setter(AccessLevel.PACKAGE)
-    private String alreadyLinked, verificationSent, invalidCode, accountVerified, loggedIn, already_verified;
+    private String alreadyLinked,
+            verificationSent,
+            invalidCode,
+            accountVerified,
+            newEmailVerified,
+            loggedIn,
+            already_verified,
+            passwords_not_match,
+            old_password_incorrect,
+            password_incorrect,
+            user_not_found,
+            password_changed;
 
 
     public UserService(PasswordEncoder passwordEncoder,
@@ -129,7 +142,7 @@ public class UserService {
         validUserAccess.isValidUserAccess(userId);
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException("User with id: " + userId + " was not found"));
+                .orElseThrow(() -> new UserNotFoundException(user_not_found));
 
         if (passwordEncoder.matches(changePasswordDto.getOldPassword(),user.getPassword())){
             if (changePasswordDto.getNewPassword().equals(changePasswordDto.getNewPasswordConfirm())){
@@ -137,17 +150,60 @@ public class UserService {
 
                 userRepository.save(user);
 
-                return "Password has been changed";
+                return password_changed;
 
             }else{
-                throw new RuntimeException("passwords not match");
+                throw new PasswordException(passwords_not_match);
             }
         }
 
-        throw new RuntimeException("old password is not correct");
+        throw new PasswordException(old_password_incorrect);
 
 
 
     }
 
+    public String changeEmail(ChangeEmailDto changeEmailDto,long userId){
+        validUserAccess.isValidUserAccess(userId);
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(user_not_found));
+
+        if (passwordEncoder.matches(changeEmailDto.getPassword(),user.getPassword())){
+
+            boolean isUnique = false;
+            String verificationCode;
+
+            do {
+                verificationCode = RandomString.make(64);
+                isUnique = userRepository.findByVerificationCode(verificationCode).isPresent();
+            } while (isUnique);
+
+
+            user.setVerificationCode(verificationCode);
+            user.setTempEmail(changeEmailDto.getNewEmail());
+
+            User userWithoutVerification = userRepository.save(user);
+
+            emailSenderService.SendVerificationCodeNewEmail(userWithoutVerification);
+
+
+            return verificationSent;
+        }
+
+        throw new PasswordException(password_incorrect);
+    }
+
+    public String getNewEmailVerified(String verificationCode) {
+        User user = userRepository.findByVerificationCode(verificationCode)
+                .orElseThrow(() -> new IllegalArgumentException(invalidCode));
+
+        user.setEmail(user.getTempEmail());
+        user.setTempEmail(null);
+        user.setVerificationCode(null);
+
+        userRepository.save(user);
+
+        return newEmailVerified;
+    }
 }

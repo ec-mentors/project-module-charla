@@ -31,6 +31,9 @@ public class User {
 
     private boolean verified;
 
+    @Email
+    private String tempEmail;
+
     public User() {
     }
 
@@ -38,6 +41,14 @@ public class User {
         this.email = email;
         this.password = password;
         this.role = role;
+    }
+
+    public String getTempEmail() {
+        return tempEmail;
+    }
+
+    public void setTempEmail(String tempEmail) {
+        this.tempEmail = tempEmail;
     }
 
     public String getVerificationCode() {
