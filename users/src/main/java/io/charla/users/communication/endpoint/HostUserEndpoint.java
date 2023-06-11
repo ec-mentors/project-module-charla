@@ -1,5 +1,6 @@
 package io.charla.users.communication.endpoint;
 
+import io.charla.users.communication.dto.ChangePasswordDto;
 import io.charla.users.communication.dto.HostDto;
 import io.charla.users.logic.HostUserService;
 import io.charla.users.logic.UserService;
@@ -42,6 +43,13 @@ public class HostUserEndpoint {
     @GetMapping("/verify-edit-profile")
     public String verified(@RequestParam("code") String verificationCode) {
         return userService.approveProfileEdit(verificationCode);
+    }
+
+    @PutMapping("/change-password/{id}")
+    @Secured("ROLE_HOST")
+    String changePassword(@Valid @RequestBody ChangePasswordDto changePasswordDto,
+                          @PathVariable long id){
+        return userService.changePassword(changePasswordDto,id);
     }
 
 }

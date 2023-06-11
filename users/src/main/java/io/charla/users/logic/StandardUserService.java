@@ -35,15 +35,18 @@ public class StandardUserService {
     public StandardUser editProfile(StandardUser standardUser, long userId) {
 
         validUserAccess.isValidUserAccess(userId);
-        //todo Should be replaced with validation, @NotEmpty can achieve same effect
+
         if (standardUser.getLanguages().isEmpty()) {
             throw new MandatoryPropertyException("key \"languages:\" is mandatory");
         }
         if (standardUser.getCountry() == null) {
             throw new MandatoryPropertyException("key \"country:\" is mandatory");
         }
+        StandardUser oldStandardUser = getStandardUserByUserId(userId);
         standardUser.setUser(getUser(userId));
-        standardUser.setId(getStandardUserByUserId(userId).getId());
+        standardUser.setId(oldStandardUser.getId());
+
+        standardUser.setTopicScoresMap(oldStandardUser.getTopicScoresMap());
         return standardUserRepository.save(standardUser);
         
     }

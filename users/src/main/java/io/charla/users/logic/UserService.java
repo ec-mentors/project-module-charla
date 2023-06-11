@@ -1,8 +1,11 @@
 package io.charla.users.logic;
 
+import io.charla.users.communication.dto.ChangePasswordDto;
+import io.charla.users.exception.UserNotFoundException;
 import io.charla.users.persistence.domain.enums.Role;
 import io.charla.users.persistence.domain.User;
 import io.charla.users.persistence.repository.UserRepository;
+import io.charla.users.security.ValidUserAccess;
 import lombok.AccessLevel;
 import lombok.Setter;
 import net.bytebuddy.utility.RandomString;
@@ -21,16 +24,24 @@ public class UserService {
     private final StandardUserService standardUserService;
     private final HostUserService hostUserService;
     private final EmailSenderServices emailSenderService;
+
+    private final ValidUserAccess validUserAccess;
     @Setter(AccessLevel.PACKAGE)
     private String alreadyLinked, verificationSent, invalidCode, accountVerified, loggedIn, already_verified;
 
 
-    public UserService(PasswordEncoder passwordEncoder, UserRepository userRepository, StandardUserService standardUserService, HostUserService hostUserService, EmailSenderServices emailSenderService) {
+    public UserService(PasswordEncoder passwordEncoder,
+                       UserRepository userRepository,
+                       StandardUserService standardUserService,
+                       HostUserService hostUserService,
+                       EmailSenderServices emailSenderService,
+                       ValidUserAccess validUserAccess) {
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
         this.standardUserService = standardUserService;
         this.hostUserService = hostUserService;
         this.emailSenderService = emailSenderService;
+        this.validUserAccess = validUserAccess;
     }
 
     public String signUp(User user) {
@@ -64,7 +75,8 @@ public class UserService {
 
     public String getVerified(String verificationCode) {
 
-        User userHere = userRepository.findByVerificationCode(verificationCode).orElseThrow(() -> new IllegalArgumentException(invalidCode));
+        User userHere = userRepository.findByVerificationCode(verificationCode)
+                .orElseThrow(() -> new IllegalArgumentException(invalidCode));
         //TODO I dont think we need if here
         if (userHere.isVerified()) {
             return already_verified;
@@ -81,7 +93,8 @@ public class UserService {
 
     public String approveProfileEdit(String verificationCode) {
 
-        User userHere = userRepository.findByVerificationCode(verificationCode).orElseThrow(() -> new IllegalArgumentException(invalidCode));
+        User userHere = userRepository.findByVerificationCode(verificationCode)
+                .orElseThrow(() -> new IllegalArgumentException(invalidCode));
         //TODO I dont think we need if here
         if (userHere.isVerified()) {
             return already_verified;
@@ -111,5 +124,30 @@ public class UserService {
 
     }
 
+
+    public String changePassword(ChangePasswordDto changePasswordDto,long userId){
+        validUserAccess.isValidUserAccess(userId);
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User with id: " + userId + " was not found"));
+
+        if (passwordEncoder.matches(changePasswordDto.getOldPassword(),user.getPassword())){
+            if (changePasswordDto.getNewPassword().equals(changePasswordDto.getNewPasswordConfirm())){
+                user.setPassword(passwordEncoder.encode(changePasswordDto.getNewPassword()));
+
+                userRepository.save(user);
+
+                return "Password has been changed";
+
+            }else{
+                throw new RuntimeException("passwords not match");
+            }
+        }
+
+        throw new RuntimeException("old password is not correct");
+
+
+
+    }
 
 }
