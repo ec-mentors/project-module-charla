@@ -2,8 +2,8 @@ spring:
   mail:
     host: mail.gmx.net
     port: 587
-    username: charla23@gmx.at
-    password: Sh2801zao37.F
+    username: ${EMAIL_ADDRESS}
+    password: ${EMAIL_PASSWORD}
     properties:
       mail:
         smtp:
