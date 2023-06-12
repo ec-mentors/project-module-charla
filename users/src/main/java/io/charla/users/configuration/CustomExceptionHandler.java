@@ -2,6 +2,7 @@ package io.charla.users.configuration;
 
 import io.charla.users.exception.ForbiddenUserAccessException;
 import io.charla.users.exception.MandatoryPropertyException;
+import io.charla.users.exception.PasswordException;
 import io.charla.users.exception.UserNotFoundException;
 import lombok.AccessLevel;
 import lombok.Setter;
@@ -181,6 +182,11 @@ public class CustomExceptionHandler implements AuthenticationEntryPoint {
      */
     @ExceptionHandler(MandatoryPropertyException.class)
     public ResponseEntity<String> mandatoryProperty(Exception e){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    }
+
+    @ExceptionHandler(PasswordException.class)
+    public ResponseEntity<String> passwordException(Exception e){
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
     }
 

@@ -1,5 +1,7 @@
 package io.charla.users.communication.endpoint;
 
+import io.charla.users.communication.dto.ChangeEmailDto;
+import io.charla.users.communication.dto.ChangePasswordDto;
 import io.charla.users.communication.dto.HostDto;
 import io.charla.users.logic.HostUserService;
 import io.charla.users.logic.UserService;
@@ -21,16 +23,6 @@ public class HostUserEndpoint {
         this.hostUserService = hostUserService;
         this.userService = userService;
     }
-//todo Sandra taught us to throw exception here, our service code should return optional
-    // use validation
-
-    @PutMapping("/edit-profile/{id}")
-    @Secured("ROLE_HOST")
-    public String updateHostProfile(@Valid @RequestBody HostDto hostDto, @PathVariable Long id) {
-
-        return hostUserService.editHostProfile(hostDto, id);
-    }
-
 
     @GetMapping("/get-profile/{id}")
     public String getHostProfileData(@PathVariable Long id) {
@@ -38,10 +30,18 @@ public class HostUserEndpoint {
         return hostUserService.retrieveHostProfileInfo(id);
     }
 
+    @PutMapping("/change-password/{id}")
+    @Secured("ROLE_HOST")
+    String changePassword(@Valid @RequestBody ChangePasswordDto changePasswordDto,
+                          @PathVariable long id){
+        return userService.changePassword(changePasswordDto,id);
+    }
 
-    @GetMapping("/verify-edit-profile")
-    public String verified(@RequestParam("code") String verificationCode) {
-        return userService.approveProfileEdit(verificationCode);
+    @PutMapping("/change-email/{id}")
+    @Secured("ROLE_HOST")
+    String changeEmail(@Valid @RequestBody ChangeEmailDto changeEmailDto
+                        ,@PathVariable long id){
+        return userService.changeEmail(changeEmailDto,id);
     }
 
 }

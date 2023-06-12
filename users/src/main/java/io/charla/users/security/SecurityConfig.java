@@ -33,6 +33,7 @@ public class SecurityConfig {
                 .authorizeRequests()
                 .antMatchers(HttpMethod.POST, "/users/signup").permitAll()
                 .antMatchers(HttpMethod.GET, "/users/verify").permitAll()
+                .antMatchers(HttpMethod.GET,"/users/verify-new-email").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .httpBasic()

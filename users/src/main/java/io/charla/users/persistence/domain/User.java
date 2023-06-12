@@ -31,6 +31,9 @@ public class User {
 
     private boolean verified;
 
+    @Email
+    private String tempEmail;
+
     public User() {
     }
 
@@ -38,6 +41,14 @@ public class User {
         this.email = email;
         this.password = password;
         this.role = role;
+    }
+
+    public String getTempEmail() {
+        return tempEmail;
+    }
+
+    public void setTempEmail(String tempEmail) {
+        this.tempEmail = tempEmail;
     }
 
     public String getVerificationCode() {
@@ -50,11 +61,6 @@ public class User {
 
     public boolean isVerified() {
         return verified;
-    }
-
-    @Override
-    public String toString() {
-        return "email: " + email;
     }
 
     public void setVerified(boolean verified) {
@@ -92,5 +98,17 @@ public class User {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "Id=" + Id +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", role=" + role +
+                ", verificationCode='" + verificationCode + '\'' +
+                ", verified=" + verified +
+                '}';
     }
 }

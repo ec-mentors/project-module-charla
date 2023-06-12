@@ -21,6 +21,7 @@ public class EmailSenderServices {
 
     private final String emailNotSent;
     private String emailContent;
+    private String newEmailContent;
     private final String sender, senderName, subject;
 
     public EmailSenderServices(JavaMailSender mailSender,
@@ -28,13 +29,15 @@ public class EmailSenderServices {
                                @Value("${sender}")  String sender,
                                @Value("${sender-name}") String senderName,
                                @Value("${subject}") String subject,
-                               @Value("${email-content}") String emailContent) {
+                               @Value("${email-content}") String emailContent,
+                               @Value("${new-email-content}") String newEmailContent) {
         this.mailSender = mailSender;
         this.emailNotSent = emailNotSent;
         this.sender = sender;
         this.senderName = senderName;
         this.subject = subject;
         this.emailContent = emailContent;
+        this.newEmailContent = newEmailContent;
     }
 
 
@@ -60,8 +63,7 @@ public class EmailSenderServices {
 
         String urlWithCode = "http://" + getIp() + ":9001/users" + "/verify?code=" + user.getVerificationCode();
 
-
-        emailContent = emailContent.replace("{urlWithCode}", urlWithCode);
+        String newEmailContentStr = emailContent.replace("{urlWithCode}", urlWithCode);
 
 
         try {
@@ -75,7 +77,8 @@ public class EmailSenderServices {
 
             helper.setSubject(subject);
 
-            helper.setText(emailContent, true);
+            helper.setText(newEmailContentStr, true);
+
 
             mailSender.send(mimeMessage);
 
@@ -85,5 +88,41 @@ public class EmailSenderServices {
         }
 
     }
+
+    public void SendVerificationCodeNewEmail(User user) {
+
+
+        //String urlWithCode=  "http://localhost:9001/users"+"/verify?code="+user.getVerificationCode();
+
+        String urlWithCode = "http://" + getIp() + ":9001/users" + "/verify-new-email?code=" + user.getVerificationCode();
+
+        String newEmailContentStr = newEmailContent.replace("{urlWithCode}", urlWithCode)
+                .replace("{old_email}",user.getEmail())
+                .replace("{new_email}",user.getTempEmail());
+
+
+        try {
+
+            MimeMessage mimeMessage = mailSender.createMimeMessage();
+            MimeMessageHelper helper =
+                    new MimeMessageHelper(mimeMessage, true);
+
+            helper.setFrom(sender, senderName);
+            helper.setTo(user.getTempEmail());
+
+            helper.setSubject(subject);
+
+            helper.setText(newEmailContentStr, true);
+
+
+            mailSender.send(mimeMessage);
+
+
+        } catch (MessagingException | UnsupportedEncodingException e) {
+            throw new IllegalStateException(emailNotSent);
+        }
+
+    }
+
 
 }
