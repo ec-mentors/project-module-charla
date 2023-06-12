@@ -104,27 +104,10 @@ public class UserService {
     }
 
 
-    public String approveProfileEdit(String verificationCode) {
-
-        User userHere = userRepository.findByVerificationCode(verificationCode)
-                .orElseThrow(() -> new IllegalArgumentException(invalidCode));
-        //TODO I dont think we need if here
-        if (userHere.isVerified()) {
-            return already_verified;
-        } else {
-            userHere.setVerificationCode(null);
-            userHere.setVerified(true);
-            userRepository.save(userHere);
-            return accountVerified;
-
-        }
-    }
-
-
     private void assignUser(User user) {
-        if (user.getRole().equals(Role.ROLE_USER)){
+        if (user.getRole().equals(Role.ROLE_USER)) {
             standardUserService.createStandardUser(user);
-        }else { //TODO other user types
+        } else { //TODO other user types
 
             // to create User creation (factory method) here
             hostUserService.createStandardUser(user);
@@ -138,21 +121,21 @@ public class UserService {
     }
 
 
-    public String changePassword(ChangePasswordDto changePasswordDto,long userId){
+    public String changePassword(ChangePasswordDto changePasswordDto, long userId) {
         validUserAccess.isValidUserAccess(userId);
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(user_not_found));
 
-        if (passwordEncoder.matches(changePasswordDto.getOldPassword(),user.getPassword())){
-            if (changePasswordDto.getNewPassword().equals(changePasswordDto.getNewPasswordConfirm())){
+        if (passwordEncoder.matches(changePasswordDto.getOldPassword(), user.getPassword())) {
+            if (changePasswordDto.getNewPassword().equals(changePasswordDto.getNewPasswordConfirm())) {
                 user.setPassword(passwordEncoder.encode(changePasswordDto.getNewPassword()));
 
                 userRepository.save(user);
 
                 return password_changed;
 
-            }else{
+            } else {
                 throw new PasswordException(passwords_not_match);
             }
         }
@@ -160,16 +143,15 @@ public class UserService {
         throw new PasswordException(old_password_incorrect);
 
 
-
     }
 
-    public String changeEmail(ChangeEmailDto changeEmailDto,long userId){
+    public String changeEmail(ChangeEmailDto changeEmailDto, long userId) {
         validUserAccess.isValidUserAccess(userId);
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(user_not_found));
 
-        if (passwordEncoder.matches(changeEmailDto.getPassword(),user.getPassword())){
+        if (passwordEncoder.matches(changeEmailDto.getPassword(), user.getPassword())) {
 
             boolean isUnique = false;
             String verificationCode;
@@ -206,4 +188,53 @@ public class UserService {
 
         return newEmailVerified;
     }
+
+    // TODO combine assignUser, use endpoint for change pass,email in user
+    // TODO please let's get rid of id, when we are logged in, we see our info directly
+
+    //TODO make only on email service class with different message and template passed on user input
+    //TODO alla has changed wrong emailService
+    //TODO let's solve DTO problem
+    // TOTO New password should also have some validation
+
+    public String resetUserPassword(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("Email not found, have you ever signed up?"));
+
+        if (!user.isVerified()) {
+            throw new IllegalStateException("You are not yet verified. please register once again tomorrow");
+        } else {
+            String resetCode;
+            do {
+                resetCode = RandomString.make(64);
+            } while (userRepository.findByVerificationCode(resetCode).isPresent());
+
+            user.setResetCode(resetCode);
+            userRepository.save(user);
+
+            emailSenderService.sendRestCode(user);
+
+            return "Reset link has been sent to your email.";
+        }
+    }
+
+
+    public String createNewPass(String resetCode, ChangePasswordDto changePasswordDto) {
+
+        User user = userRepository.findByResetCode(resetCode)
+                .orElseThrow(() -> new IllegalStateException("Invalid verification code"));
+
+            if (changePasswordDto.getNewPassword().equals(changePasswordDto.getNewPasswordConfirm())) {
+                user.setPassword(passwordEncoder.encode(changePasswordDto.getNewPasswordConfirm()));
+
+                user.setResetCode(null);
+                userRepository.save(user);
+
+                return "done, you new pass is set";
+            } else {
+                throw new PasswordException("make sure both passwords are same");
+           }
+    }
+
+
 }
