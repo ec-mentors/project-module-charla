@@ -7,10 +7,7 @@ import io.charla.matcher.persistance.domain.enums.Language;
 import io.charla.matcher.persistance.domain.enums.Topic;
 
 import javax.persistence.*;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 public class StandardUser {
@@ -123,5 +120,31 @@ public class StandardUser {
 
     public void setTopicScoresMap(Map<Topic, Integer> topicScoresMap) {
         this.topicScoresMap = topicScoresMap;
+    }
+
+    @Override
+    public String toString() {
+        return "StandardUser{" +
+                "Id=" + Id +
+                ", user=" + user +
+                ", languages=" + languages +
+                ", preferredTopics=" + preferredTopics +
+                ", country=" + country +
+                ", city=" + city +
+                ", topicScoresMap=" + topicScoresMap +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        StandardUser that = (StandardUser) o;
+        return Id == that.Id && Objects.equals(user, that.user) && Objects.equals(languages, that.languages) && Objects.equals(preferredTopics, that.preferredTopics) && country == that.country && city == that.city && Objects.equals(topicScoresMap, that.topicScoresMap);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(Id, user, languages, preferredTopics, country, city, topicScoresMap);
     }
 }
