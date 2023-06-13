@@ -9,4 +9,7 @@ import java.util.Optional;
 public interface HostUserRepository extends JpaRepository<HostUser,Long> {
 
     Optional<HostUser> findByUser(User user);
+
+    @Override
+    HostUser getById(Long aLong);
 }
