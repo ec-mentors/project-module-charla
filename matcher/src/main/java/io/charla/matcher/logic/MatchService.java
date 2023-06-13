@@ -8,7 +8,9 @@ import io.charla.matcher.persistance.domain.enums.Topic;
 import io.charla.matcher.persistance.repository.StandardUserRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class MatchService {
@@ -57,9 +59,82 @@ public class MatchService {
 
     //start matching
     public Set<StandardUser> findMatches(MatchPropertiesDto matchPropertiesDto) {
+        //checks that match properties are shared by user profile
         StandardUser standardUser = checkMatchIsReady(matchPropertiesDto);
 
-        return Set.of(standardUser);
+        Set<StandardUser> matches = new HashSet<>();
+        Set<StandardUser> potentialMatches = standardUserRepository.findAllByLanguagesIn(matchPropertiesDto.getChosenLanguages());
+        Set<Topic> chosenTopics = matchPropertiesDto.getChosenTopics();
+        for (StandardUser match : potentialMatches) {
+            for (Topic topic : match.getTopicScoresMap().keySet()) {
+                //potentialMatches = potentialMatches.stream().filter(potMatch-> matchPropertiesDto.getChosenTopics().contains(topic)).collect(Collectors.toSet());
+                if (chosenTopics.contains(topic)) {
+                    matches.add(match);
+                }
+            }
+        }
+        LocationPreference locationPreference = matchPropertiesDto.getLocationPreference();
+        if (locationPreference == LocationPreference.MY_COUNTRY) {
+            matches = matches.stream().filter(match -> match.getCountry() == standardUser.getCountry()).collect(Collectors.toSet());
+        } else if (locationPreference == LocationPreference.MY_CITY) {
+            matches = matches.stream().filter(match -> match.getCity() == standardUser.getCity()).collect(Collectors.toSet());
+        }
+
+        //find person with most shared topics (with chosenTopics)
+        //if one then return
+        //then calculate deltas per topic
+        //then person with highest delta average
+
+        //should just return match or also info about polarity etc.?
+
+        //potentialMatches.stream().filter(match -> standardUser.getTopicScoresMap().containsKey(match.getTopicScoresMap().));
+
+        //The algorithm has to consider the following aspects:
+        //
+        //Mandatory: if User 1 and 2 does not match here the match is “thrown away”
+        //
+        //Spoken language → both have to speak the same language
+        //Preferred topics → both have to be interested in the same topics
+        //Location → if searching person chooses e.g. “in my country” User 2 has to be within the same country
+        //Dynamically:
+        //
+        //Opinion category→ both users have to disagree in the topics that are matching (e.g. User 1 is opinion category 1 and User 2 opinion category 3 in “Politics”)
+        //In detail: Opposite opinions are preferred over similar opinions. If both have the same opinion categories the match is still not “thrown away”! (explicit message is shown in the frontend)
+        //User 1 “Sabrina”: Searches for someone
+        //
+        //Location: Vienna
+        //Language: English & German
+        //Preferred Topics: Politics (2) and Religion (0)
+        //User 2 “Hans”:
+        //
+        //Location: Vienna
+        //Language: German
+        //Preferred Topics: Politics (5) , Religion (3) and corona (10)
+        //‌
+        //User 3 “Gerhard”:
+        //
+        //Location: Graz
+        //Language: Turkish
+        //Preferred Topics: Religion (10)
+        //Sabrina searches:
+        //
+        //Location: In my country
+        //Language: German (English & German are suggested)
+        //Preferred topic: Politics and Religion (Politics and Religion are suggested)
+        //Result:
+        //
+        //Both are valid based on the location (both are in austria)
+        //Hans matches but gerhard not (based on the language)
+        //Both match based on the topics
+        //Ranking might be necessary - if several topics are matched they are ranked above the difference
+        //Hans: Poltics 3 and Religion 3 → 3 (average of all score deltas)
+        //gerhard: Politics INVALID and Religion 10 → 10 (average of all score deltas)
+        //Acceptance Criteria
+        //Delete
+        //0%
+        //Top most match is returned as result (including e-mail address of match)
+        //If no match was found an error message is thrown
+        return matches;
     }
 
 }
