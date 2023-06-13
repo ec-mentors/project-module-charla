@@ -18,7 +18,7 @@ public class MatchService {
         this.standardUserRepository = standardUserRepository;
     }
 
-    public StandardUser checkMatch(MatchPropertiesDto matchPropertiesDto) {
+    public StandardUser checkMatchIsReady(MatchPropertiesDto matchPropertiesDto) {
         //userId in dto is user or standardUser id?
         StandardUser standardUser = standardUserRepository.findById(matchPropertiesDto.getStandardUserId()).orElseThrow(() -> new RuntimeException("user not found"));
 
@@ -57,7 +57,7 @@ public class MatchService {
 
     //start matching
     public Set<StandardUser> findMatches(MatchPropertiesDto matchPropertiesDto) {
-        StandardUser standardUser = checkMatch(matchPropertiesDto);
+        StandardUser standardUser = checkMatchIsReady(matchPropertiesDto);
 
         return Set.of(standardUser);
     }

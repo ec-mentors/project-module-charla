@@ -35,7 +35,7 @@ class MatchServiceTest {
     @MethodSource("paramsForCheck")
     void checkMatch(MatchPropertiesDto matchPropertiesDto, StandardUser expectedStandardUser, Map<Topic, Integer> topicScoreMap) {
         Mockito.when(standardUserRepository.findById(matchPropertiesDto.getStandardUserId())).thenReturn(Optional.of(new StandardUser(new User(), matchPropertiesDto.getChosenLanguages(), matchPropertiesDto.getChosenTopics(), Country.AUSTRIA, null, topicScoreMap)));
-         var actual = matchService.checkMatch(matchPropertiesDto);
+         var actual = matchService.checkMatchIsReady(matchPropertiesDto);
          actual.setId(1);
          Assertions.assertEquals(expectedStandardUser, actual);
     }
@@ -46,7 +46,7 @@ class MatchServiceTest {
         standardUser.setPreferredTopics(topics);
         Mockito.when(standardUserRepository.findById(matchPropertiesDto.getStandardUserId())).thenReturn(Optional.of(standardUser));
         Assertions.assertThrows(RuntimeException.class, () -> {
-            matchService.checkMatch(matchPropertiesDto);
+            matchService.checkMatchIsReady(matchPropertiesDto);
         });
     }
     @Test

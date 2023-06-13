@@ -10,5 +10,6 @@ spring:
     user:
       name: app
       password: app
+      ##change to environment variables {$USER_NAME}=app;{$USER_PASSWORD}=app
 server:
   port: 9002
