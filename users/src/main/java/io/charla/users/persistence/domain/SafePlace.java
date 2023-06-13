@@ -5,6 +5,8 @@ import io.charla.users.persistence.domain.enums.Country;
 import io.charla.users.persistence.domain.enums.SafePlaceKeywords;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Objects;
 
@@ -13,12 +15,13 @@ public class SafePlace {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-
+    @NotNull(message = "{safePlace.name}")
+    @NotEmpty(message = "{safePlace.name}")
     private String name;
-
+    @NotNull(message = "{safePlace.country}")
     @Enumerated(EnumType.STRING)
     private Country country;
-
+    @NotNull(message = "{safePlace.city}")
     @Enumerated(EnumType.STRING)
     private City city;
 

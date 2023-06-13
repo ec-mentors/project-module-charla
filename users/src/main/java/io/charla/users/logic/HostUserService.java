@@ -32,15 +32,15 @@ public class HostUserService {
         this.userRepository = userRepository;
     }
     public SafePlace createSafePlace(SafePlace safePlace, Long id) {
-        if (safePlace.getName().isEmpty()) {
-            throw new MandatoryPropertyException("key \"name:\" is mandatory");
-        }
-        if (safePlace.getCountry() == null) {
-            throw new MandatoryPropertyException("key \"country:\" is mandatory");
-        }
-        if (safePlace.getCity() == null) {
-            throw new MandatoryPropertyException("key \"city:\" is mandatory");
-        }
+//        if (safePlace.getName().isEmpty()) {
+//            throw new MandatoryPropertyException("key \"name:\" is mandatory");
+//        }
+//        if (safePlace.getCountry() == null) {
+//            throw new MandatoryPropertyException("key \"country:\" is mandatory");
+//        }
+//        if (safePlace.getCity() == null) {
+//            throw new MandatoryPropertyException("key \"city:\" is mandatory");
+//        }
         HostUser hostUser = hostUserRepository.getById(id);
         hostUser.getSafePlaces().add(safePlace);
         safePlaceRepository.save(safePlace);
