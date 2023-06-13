@@ -1,9 +1,12 @@
 package io.charla.users.logic;
 
 import io.charla.users.communication.dto.HostDto;
+import io.charla.users.exception.MandatoryPropertyException;
 import io.charla.users.persistence.domain.HostUser;
+import io.charla.users.persistence.domain.SafePlace;
 import io.charla.users.persistence.domain.User;
 import io.charla.users.persistence.repository.HostUserRepository;
+import io.charla.users.persistence.repository.SafePlaceRepository;
 import io.charla.users.persistence.repository.UserRepository;
 import io.charla.users.security.ValidUserAccess;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -13,13 +16,14 @@ import java.util.Optional;
 
 @Service
 public class HostUserService {
-
+    private final SafePlaceRepository safePlaceRepository;
     private final EmailSenderServicesHost emailSenderServicesHost;
     private final PasswordEncoder passwordEncoder;
     private final ValidUserAccess validUserAccess;
-private final HostUserRepository hostUserRepository;
-private final UserRepository userRepository;
-    public HostUserService(EmailSenderServicesHost emailSenderServicesHost, PasswordEncoder passwordEncoder, ValidUserAccess validUserAccess, HostUserRepository hostUserRepository, UserRepository userRepository) {
+    private final HostUserRepository hostUserRepository;
+    private final UserRepository userRepository;
+    public HostUserService(SafePlaceRepository safePlaceRepository, EmailSenderServicesHost emailSenderServicesHost, PasswordEncoder passwordEncoder, ValidUserAccess validUserAccess, HostUserRepository hostUserRepository, UserRepository userRepository) {
+        this.safePlaceRepository = safePlaceRepository;
         this.emailSenderServicesHost = emailSenderServicesHost;
 
         this.passwordEncoder = passwordEncoder;
@@ -27,9 +31,24 @@ private final UserRepository userRepository;
         this.hostUserRepository = hostUserRepository;
         this.userRepository = userRepository;
     }
-
-
-    public void createStandardUser(User user) {
+    public SafePlace createSafePlace(SafePlace safePlace, Long id) {
+        if (safePlace.getName().isEmpty()) {
+            throw new MandatoryPropertyException("key \"name:\" is mandatory");
+        }
+        if (safePlace.getCountry() == null) {
+            throw new MandatoryPropertyException("key \"country:\" is mandatory");
+        }
+        if (safePlace.getCity() == null) {
+            throw new MandatoryPropertyException("key \"city:\" is mandatory");
+        }
+        HostUser hostUser = hostUserRepository.getById(id);
+        hostUser.getSafePlaces().add(safePlace);
+        safePlaceRepository.save(safePlace);
+        hostUserRepository.save(hostUser);
+        return safePlace;
+    }
+//TODO should not we add User to the constructer of hostUser
+    public void createHostUser(User user) {
         HostUser emptyHostUser = new HostUser();
         emptyHostUser.setUser(user);
         hostUserRepository.save(emptyHostUser);

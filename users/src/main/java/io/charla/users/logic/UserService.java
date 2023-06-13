@@ -127,7 +127,7 @@ public class UserService {
         }else { //TODO other user types
 
             // to create User creation (factory method) here
-            hostUserService.createStandardUser(user);
+            hostUserService.createHostUser(user);
         }
     }
 
