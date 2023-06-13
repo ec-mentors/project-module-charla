@@ -2,6 +2,7 @@ package io.charla.users.logic;
 
 import io.charla.users.communication.dto.ChangeEmailDto;
 import io.charla.users.communication.dto.ChangePasswordDto;
+import io.charla.users.communication.dto.ResetPassDto;
 import io.charla.users.exception.PasswordException;
 import io.charla.users.exception.UserNotFoundException;
 import io.charla.users.persistence.domain.enums.Role;
@@ -35,12 +36,14 @@ public class UserService {
             accountVerified,
             newEmailVerified,
             loggedIn,
-            already_verified,
+            alreadyVerified,
             passwords_not_match,
             old_password_incorrect,
             password_incorrect,
             user_not_found,
-            password_changed;
+            password_changed,
+            userNotVerified,
+            newPasswordConfirmed;
 
 
     public UserService(PasswordEncoder passwordEncoder,
@@ -92,7 +95,7 @@ public class UserService {
                 .orElseThrow(() -> new IllegalArgumentException(invalidCode));
         //TODO I dont think we need if here
         if (userHere.isVerified()) {
-            return already_verified;
+            return alreadyVerified;
         } else {
             userHere.setVerificationCode(null);
             userHere.setVerified(true);
@@ -197,43 +200,46 @@ public class UserService {
     //TODO let's solve DTO problem
     // TOTO New password should also have some validation
 
-    public String resetUserPassword(String email) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UserNotFoundException("Email not found, have you ever signed up?"));
 
-        if (!user.isVerified()) {
-            throw new IllegalStateException("You are not yet verified. please register once again tomorrow");
-        } else {
+    public String resetUserPassword(ResetPassDto resetPassDto) {
+        User user = userRepository.findByEmail(resetPassDto.getEmail())
+                .orElseThrow(() -> new UserNotFoundException(user_not_found));
+
+        if (!(user.isVerified())) {
+            throw new IllegalStateException(userNotVerified);
+        } else if (!(resetPassDto.getNewPassword().equals(resetPassDto.getNewPassConfirm()))) {
+            throw new PasswordException(passwords_not_match);
+        }else {
+
             String resetCode;
             do {
                 resetCode = RandomString.make(64);
             } while (userRepository.findByVerificationCode(resetCode).isPresent());
 
             user.setResetCode(resetCode);
+            user.setTempPassword(passwordEncoder.encode(resetPassDto.getNewPassConfirm()));
             userRepository.save(user);
 
             emailSenderService.sendRestCode(user);
 
-            return "Reset link has been sent to your email.";
+            return verificationSent;
         }
+
     }
 
 
-    public String createNewPass(String resetCode, ChangePasswordDto changePasswordDto) {
+    public String confirmPasswordSe(String resetCode){
 
         User user = userRepository.findByResetCode(resetCode)
-                .orElseThrow(() -> new IllegalStateException("Invalid verification code"));
+                .orElseThrow(() -> new IllegalStateException(invalidCode));
 
-            if (changePasswordDto.getNewPassword().equals(changePasswordDto.getNewPasswordConfirm())) {
-                user.setPassword(passwordEncoder.encode(changePasswordDto.getNewPasswordConfirm()));
+        user.setPassword(user.getTempPassword());
 
-                user.setResetCode(null);
-                userRepository.save(user);
+        user.setResetCode(null);
+        user.setTempPassword(null);
+        userRepository.save(user);
 
-                return "done, you new pass is set";
-            } else {
-                throw new PasswordException("make sure both passwords are same");
-           }
+        return newPasswordConfirmed;
     }
 
 

@@ -90,6 +90,7 @@ public class CustomExceptionHandler implements AuthenticationEntryPoint {
         ) {
             if (authException instanceof BadCredentialsException) {
                 errorMessage = wrongCredentials;
+                System.out.println(authException.getMessage());
             } else if (authException instanceof DisabledException) {
                 errorMessage = notVerified;
             } else {

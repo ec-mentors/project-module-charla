@@ -37,6 +37,19 @@ public class User {
     @Email
     private String tempEmail;
 
+
+
+    public void setTempPassword(String tempPassword) {
+        this.tempPassword = tempPassword;
+    }
+
+
+    private String tempPassword;
+
+    public String getTempPassword() {
+        return tempPassword;
+    }
+
     public User() {
     }
 
