@@ -8,7 +8,7 @@ import io.charla.users.persistence.domain.enums.Topic;
 
 import javax.persistence.*;
 import javax.validation.constraints.Pattern;
-;import java.util.HashMap;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;

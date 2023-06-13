@@ -1,5 +1,7 @@
 package io.charla.users.communication.endpoint;
 
+import io.charla.users.communication.dto.ChangePasswordDto;
+import io.charla.users.communication.dto.ResetPassDto;
 import io.charla.users.logic.UserService;
 import io.charla.users.persistence.domain.User;
 import org.springframework.validation.annotation.Validated;
@@ -37,5 +39,18 @@ public class UserEndpoint {
     public String verifyNewEmail(@RequestParam("code") String verificationCode){
         return userService.getNewEmailVerified(verificationCode);
     }
+
+
+    @PostMapping("/reset-password")
+    public String forgetPassword(@Valid @RequestBody ResetPassDto resetPassDto){
+        return userService.resetUserPassword(resetPassDto);
+    }
+
+
+    @GetMapping("/new-password")
+    public String newPassword( @RequestParam("code") String resetCode){
+        return userService.confirmPasswordSe(resetCode);
+    }
+
 
 }
