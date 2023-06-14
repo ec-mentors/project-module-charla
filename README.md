@@ -1,5 +1,5 @@
 ### Team members
- - Alaa Al Janadi  is the best
+ - Alaa Al Janadi 
  - George McClelland
  - Albert Dadic
 
