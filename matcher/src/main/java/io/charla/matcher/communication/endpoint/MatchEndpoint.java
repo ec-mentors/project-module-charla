@@ -23,8 +23,4 @@ public class MatchEndpoint {
     Set<StandardUser> findMatches(@Valid @RequestBody MatchPropertiesDto matchPropertiesDto) {
         return matchService.findMatches(matchPropertiesDto);
     }
-
-    //TODO - //CLIENT IN USER
-    //    //set of users in findmatch
-    //    test
 }

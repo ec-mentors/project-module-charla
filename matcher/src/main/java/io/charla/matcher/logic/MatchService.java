@@ -8,7 +8,6 @@ import io.charla.matcher.persistance.domain.enums.Topic;
 import io.charla.matcher.persistance.repository.StandardUserRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -62,22 +61,34 @@ public class MatchService {
         //checks that match properties are shared by user profile
         StandardUser standardUser = checkMatchIsReady(matchPropertiesDto);
 
-        Set<StandardUser> matches = new HashSet<>();
-        Set<StandardUser> potentialMatches = standardUserRepository.findAllByLanguagesIn(matchPropertiesDto.getChosenLanguages());
+        //Set<StandardUser> matches = new HashSet<>();
+        Set<StandardUser> potentialMatches2 = standardUserRepository.findAllByLanguagesIn(matchPropertiesDto.getChosenLanguages());
+
+        Set<StandardUser> potentialMatches = standardUserRepository.findAllByLanguagesInAndPreferredTopicsIn(matchPropertiesDto.getChosenLanguages(), matchPropertiesDto.getChosenTopics());
+
+        //TODO - remove this
+        System.out.println("all based on language: " + potentialMatches2);
+        potentialMatches2.remove(standardUser);
+        System.out.println("removed searching user: " + potentialMatches2);
+
+        System.out.println("2all based on language and topic: " + potentialMatches);
+        potentialMatches.remove(standardUser);
+        System.out.println("2removed searching user: " + potentialMatches);
+
         Set<Topic> chosenTopics = matchPropertiesDto.getChosenTopics();
         for (StandardUser match : potentialMatches) {
             for (Topic topic : match.getTopicScoresMap().keySet()) {
                 //potentialMatches = potentialMatches.stream().filter(potMatch-> matchPropertiesDto.getChosenTopics().contains(topic)).collect(Collectors.toSet());
-                if (chosenTopics.contains(topic)) {
-                    matches.add(match);
+                if (!chosenTopics.contains(topic)) {
+                    potentialMatches.remove(match);
                 }
             }
         }
         LocationPreference locationPreference = matchPropertiesDto.getLocationPreference();
         if (locationPreference == LocationPreference.MY_COUNTRY) {
-            matches = matches.stream().filter(match -> match.getCountry() == standardUser.getCountry()).collect(Collectors.toSet());
+            potentialMatches = potentialMatches.stream().filter(match -> match.getCountry() == standardUser.getCountry()).collect(Collectors.toSet());
         } else if (locationPreference == LocationPreference.MY_CITY) {
-            matches = matches.stream().filter(match -> match.getCity() == standardUser.getCity()).collect(Collectors.toSet());
+            potentialMatches = potentialMatches.stream().filter(match -> match.getCity() == standardUser.getCity()).collect(Collectors.toSet());
         }
 
         //find person with most shared topics (with chosenTopics)
@@ -134,7 +145,7 @@ public class MatchService {
         //0%
         //Top most match is returned as result (including e-mail address of match)
         //If no match was found an error message is thrown
-        return matches;
+        return potentialMatches;
     }
 
 }
