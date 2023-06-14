@@ -8,8 +8,7 @@ import io.charla.matcher.persistance.domain.enums.Topic;
 import io.charla.matcher.persistance.repository.StandardUserRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.*;
 
 @Service
 public class MatchService {
@@ -57,95 +56,98 @@ public class MatchService {
 
 
     //start matching
-    public Set<StandardUser> findMatches(MatchPropertiesDto matchPropertiesDto) {
+    public List<StandardUser> findMatches(MatchPropertiesDto matchPropertiesDto) {
         //checks that match properties are shared by user profile
         StandardUser standardUser = checkMatchIsReady(matchPropertiesDto);
 
-        //Set<StandardUser> matches = new HashSet<>();
-        Set<StandardUser> potentialMatches2 = standardUserRepository.findAllByLanguagesIn(matchPropertiesDto.getChosenLanguages());
+        Set<StandardUser> matches = new HashSet<>();
+        //Set<StandardUser> potentialMatches2 = standardUserRepository.findAllByLanguagesIn(matchPropertiesDto.getChosenLanguages());
 
-        Set<StandardUser> potentialMatches = standardUserRepository.findAllByLanguagesInAndPreferredTopicsIn(matchPropertiesDto.getChosenLanguages(), matchPropertiesDto.getChosenTopics());
+        Set<StandardUser> potentialMatches = Set.of();
+        LocationPreference locationPreference = matchPropertiesDto.getLocationPreference();
+        if (locationPreference == LocationPreference.MY_COUNTRY) {
+            potentialMatches = standardUserRepository.findAllByLanguagesInAndPreferredTopicsInAndCountry(matchPropertiesDto.getChosenLanguages(), matchPropertiesDto.getChosenTopics(), standardUser.getCountry());
+        } else if (locationPreference == LocationPreference.MY_CITY) {
+            potentialMatches = standardUserRepository.findAllByLanguagesInAndPreferredTopicsInAndCity(matchPropertiesDto.getChosenLanguages(), matchPropertiesDto.getChosenTopics(), standardUser.getCity());
+        } else {
+            potentialMatches = standardUserRepository.findAllByLanguagesInAndPreferredTopicsIn(matchPropertiesDto.getChosenLanguages(), matchPropertiesDto.getChosenTopics());
+        }
+        potentialMatches.remove(standardUser);
+
+//        Set<StandardUser> potentialMatches = standardUserRepository.findAllByLanguagesInAndPreferredTopicsIn(matchPropertiesDto.getChosenLanguages(), matchPropertiesDto.getChosenTopics());
 
         //TODO - remove this
-        System.out.println("all based on language: " + potentialMatches2);
-        potentialMatches2.remove(standardUser);
-        System.out.println("removed searching user: " + potentialMatches2);
-
-        System.out.println("2all based on language and topic: " + potentialMatches);
-        potentialMatches.remove(standardUser);
-        System.out.println("2removed searching user: " + potentialMatches);
+//        System.out.println("all based on language: " + potentialMatches2);
+//        potentialMatches2.remove(standardUser);
+//        System.out.println("removed searching user: " + potentialMatches2);
+        System.out.println("2all based on language and topic (and maybe country or city): " + potentialMatches);
 
         Set<Topic> chosenTopics = matchPropertiesDto.getChosenTopics();
         for (StandardUser match : potentialMatches) {
             for (Topic topic : match.getTopicScoresMap().keySet()) {
                 //potentialMatches = potentialMatches.stream().filter(potMatch-> matchPropertiesDto.getChosenTopics().contains(topic)).collect(Collectors.toSet());
-                if (!chosenTopics.contains(topic)) {
-                    potentialMatches.remove(match);
+                if (chosenTopics.contains(topic)) {
+                    matches.add(match);
                 }
             }
         }
-        LocationPreference locationPreference = matchPropertiesDto.getLocationPreference();
-        if (locationPreference == LocationPreference.MY_COUNTRY) {
-            potentialMatches = potentialMatches.stream().filter(match -> match.getCountry() == standardUser.getCountry()).collect(Collectors.toSet());
-        } else if (locationPreference == LocationPreference.MY_CITY) {
-            potentialMatches = potentialMatches.stream().filter(match -> match.getCity() == standardUser.getCity()).collect(Collectors.toSet());
-        }
 
+//        LocationPreference locationPreference = matchPropertiesDto.getLocationPreference();
+//        if (locationPreference == LocationPreference.MY_COUNTRY) {
+//            matches = matches.stream().filter(match -> match.getCountry() == standardUser.getCountry()).collect(Collectors.toSet());
+//        } else if (locationPreference == LocationPreference.MY_CITY) {
+//            matches = matches.stream().filter(match -> match.getCity() == standardUser.getCity()).collect(Collectors.toSet());
+//        }
+
+        if (matches.isEmpty()) {
+            //return Optional.empty();
+            return List.of();
+        } else if (matches.size() == 1) {
+            //TODO - change return value to Optional of instance not set of sUsers
+            // will also need to change expectation of restTemplate in users service
+            //return matches.stream().findFirst();
+        }
+        //TODO ---------- at this point we have our list of potential matches, if size == 0 or 1 then finished, if more than 1 then narrow down to best match
         //find person with most shared topics (with chosenTopics)
         //if one then return
         //then calculate deltas per topic
-        //then person with highest delta average
+        //then return person with highest delta average. if tie then return one randomly?
 
-        //should just return match or also info about polarity etc.?
+        Map<StandardUser, Double> matchMeanAverageDeltaMap = new HashMap<>();
+        Map<StandardUser, Map<Topic, Integer>> matchTopicDeltaMapMap = new HashMap<>();
 
-        //potentialMatches.stream().filter(match -> standardUser.getTopicScoresMap().containsKey(match.getTopicScoresMap().));
+        for (StandardUser match : matches) {
+            matchTopicDeltaMapMap.put(match, new HashMap<>());
+            int totalDelta = 0;
+            for (Topic chosenTopic : chosenTopics) {
+                if (match.getTopicScoresMap().containsKey(chosenTopic)) {
+                    var delta = Math.abs(standardUser.getTopicScoresMap().get(chosenTopic) - match.getTopicScoresMap().get(chosenTopic));
+                    matchTopicDeltaMapMap.get(match).put(chosenTopic, delta);
+                    totalDelta += delta;
+                }
+            }
+            var size = matchTopicDeltaMapMap.get(match).size();
+            double averageDelta = (double) totalDelta / size;
+            matchMeanAverageDeltaMap.put(match, averageDelta);
+            //Map<Topic, Integer> topicDeltaMap = new HashMap<>();
+        }
 
-        //The algorithm has to consider the following aspects:
-        //
-        //Mandatory: if User 1 and 2 does not match here the match is “thrown away”
-        //
-        //Spoken language → both have to speak the same language
-        //Preferred topics → both have to be interested in the same topics
-        //Location → if searching person chooses e.g. “in my country” User 2 has to be within the same country
-        //Dynamically:
-        //
-        //Opinion category→ both users have to disagree in the topics that are matching (e.g. User 1 is opinion category 1 and User 2 opinion category 3 in “Politics”)
-        //In detail: Opposite opinions are preferred over similar opinions. If both have the same opinion categories the match is still not “thrown away”! (explicit message is shown in the frontend)
-        //User 1 “Sabrina”: Searches for someone
-        //
-        //Location: Vienna
-        //Language: English & German
-        //Preferred Topics: Politics (2) and Religion (0)
-        //User 2 “Hans”:
-        //
-        //Location: Vienna
-        //Language: German
-        //Preferred Topics: Politics (5) , Religion (3) and corona (10)
-        //‌
-        //User 3 “Gerhard”:
-        //
-        //Location: Graz
-        //Language: Turkish
-        //Preferred Topics: Religion (10)
-        //Sabrina searches:
-        //
-        //Location: In my country
-        //Language: German (English & German are suggested)
-        //Preferred topic: Politics and Religion (Politics and Religion are suggested)
-        //Result:
-        //
-        //Both are valid based on the location (both are in austria)
-        //Hans matches but gerhard not (based on the language)
-        //Both match based on the topics
-        //Ranking might be necessary - if several topics are matched they are ranked above the difference
-        //Hans: Poltics 3 and Religion 3 → 3 (average of all score deltas)
-        //gerhard: Politics INVALID and Religion 10 → 10 (average of all score deltas)
-        //Acceptance Criteria
-        //Delete
-        //0%
-        //Top most match is returned as result (including e-mail address of match)
-        //If no match was found an error message is thrown
-        return potentialMatches;
+        System.out.println(matchMeanAverageDeltaMap);
+        var matchAverageEntryList = new ArrayList<>(matchMeanAverageDeltaMap.entrySet());
+        matchAverageEntryList.sort(Map.Entry.comparingByValue(Comparator.reverseOrder()));
+        System.out.println(matchAverageEntryList);
+        System.out.println("this is either best or worst match: " + matchAverageEntryList.get(0).getKey());
+
+        Map<StandardUser, Double> orderedMatchDeltaMap = new LinkedHashMap<>();
+        for (var entry : matchAverageEntryList) {
+            orderedMatchDeltaMap.put(entry.getKey(), entry.getValue());
+        }
+//        List<StandardUser> matchesOrdered = new ArrayList<>();
+//        matchesOrdered.addAll(orderedMatchDeltaMap.keySet());
+
+        return new ArrayList<>(orderedMatchDeltaMap.keySet());
+
+        //TODO should just return match or also info about polarity etc.?
     }
 
 }
