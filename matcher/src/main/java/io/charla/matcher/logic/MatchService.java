@@ -60,11 +60,12 @@ public class MatchService {
         //checks that match properties are shared by user profile
         StandardUser standardUser = checkMatchIsReady(matchPropertiesDto);
 
-        Set<StandardUser> matches = new HashSet<>();
-        //Set<StandardUser> potentialMatches2 = standardUserRepository.findAllByLanguagesIn(matchPropertiesDto.getChosenLanguages());
 
+        //get a list of potential matches from the database matching language and preferred topic (and country or city if specified in matchPropertiesDto)
         Set<StandardUser> potentialMatches = Set.of();
         LocationPreference locationPreference = matchPropertiesDto.getLocationPreference();
+
+
         if (locationPreference == LocationPreference.MY_COUNTRY) {
             potentialMatches = standardUserRepository.findAllByLanguagesInAndPreferredTopicsInAndCountry(matchPropertiesDto.getChosenLanguages(), matchPropertiesDto.getChosenTopics(), standardUser.getCountry());
         } else if (locationPreference == LocationPreference.MY_CITY) {
@@ -72,33 +73,22 @@ public class MatchService {
         } else {
             potentialMatches = standardUserRepository.findAllByLanguagesInAndPreferredTopicsIn(matchPropertiesDto.getChosenLanguages(), matchPropertiesDto.getChosenTopics());
         }
+        //removes the searching user who should also be captured by those criteria
         potentialMatches.remove(standardUser);
 
-//        Set<StandardUser> potentialMatches = standardUserRepository.findAllByLanguagesInAndPreferredTopicsIn(matchPropertiesDto.getChosenLanguages(), matchPropertiesDto.getChosenTopics());
-
-        //TODO - remove this
-//        System.out.println("all based on language: " + potentialMatches2);
-//        potentialMatches2.remove(standardUser);
-//        System.out.println("removed searching user: " + potentialMatches2);
-        System.out.println("2all based on language and topic (and maybe country or city): " + potentialMatches);
-
+        //filtering out the matches who have the topics but no completed questionnaires
+        List<StandardUser> matches = new ArrayList<>();
         Set<Topic> chosenTopics = matchPropertiesDto.getChosenTopics();
         for (StandardUser match : potentialMatches) {
             for (Topic topic : match.getTopicScoresMap().keySet()) {
-                //potentialMatches = potentialMatches.stream().filter(potMatch-> matchPropertiesDto.getChosenTopics().contains(topic)).collect(Collectors.toSet());
                 if (chosenTopics.contains(topic)) {
                     matches.add(match);
                 }
             }
         }
 
-//        LocationPreference locationPreference = matchPropertiesDto.getLocationPreference();
-//        if (locationPreference == LocationPreference.MY_COUNTRY) {
-//            matches = matches.stream().filter(match -> match.getCountry() == standardUser.getCountry()).collect(Collectors.toSet());
-//        } else if (locationPreference == LocationPreference.MY_CITY) {
-//            matches = matches.stream().filter(match -> match.getCity() == standardUser.getCity()).collect(Collectors.toSet());
-//        }
-
+        //at this point we have our list of potential matches, if size == 0 or 1 then finished, if more than 1 then narrow down to best match.
+        //this is based on the ticket as it currently stands (where we should return only the top match)
         if (matches.isEmpty()) {
             //return Optional.empty();
             return List.of();
@@ -106,16 +96,19 @@ public class MatchService {
             //TODO - change return value to Optional of instance not set of sUsers
             // will also need to change expectation of restTemplate in users service
             //return matches.stream().findFirst();
+            return matches;
         }
-        //TODO ---------- at this point we have our list of potential matches, if size == 0 or 1 then finished, if more than 1 then narrow down to best match
+        //TODO discuss with daniel what he actually wants here - according to the story it should follow the following process, but maybe not ideal
         //find person with most shared topics (with chosenTopics)
         //if one then return
         //then calculate deltas per topic
         //then return person with highest delta average. if tie then return one randomly?
 
+
         Map<StandardUser, Double> matchMeanAverageDeltaMap = new HashMap<>();
         Map<StandardUser, Map<Topic, Integer>> matchTopicDeltaMapMap = new HashMap<>();
 
+        //calculating the delta for each topic of each match, as well as the average delta for each match across all common topics
         for (StandardUser match : matches) {
             matchTopicDeltaMapMap.put(match, new HashMap<>());
             int totalDelta = 0;
@@ -129,25 +122,19 @@ public class MatchService {
             var size = matchTopicDeltaMapMap.get(match).size();
             double averageDelta = (double) totalDelta / size;
             matchMeanAverageDeltaMap.put(match, averageDelta);
-            //Map<Topic, Integer> topicDeltaMap = new HashMap<>();
         }
 
-        System.out.println(matchMeanAverageDeltaMap);
+        //ordering the maps based on the deltas in descending order
         var matchAverageEntryList = new ArrayList<>(matchMeanAverageDeltaMap.entrySet());
         matchAverageEntryList.sort(Map.Entry.comparingByValue(Comparator.reverseOrder()));
-        System.out.println(matchAverageEntryList);
-        System.out.println("this is either best or worst match: " + matchAverageEntryList.get(0).getKey());
 
         Map<StandardUser, Double> orderedMatchDeltaMap = new LinkedHashMap<>();
         for (var entry : matchAverageEntryList) {
             orderedMatchDeltaMap.put(entry.getKey(), entry.getValue());
         }
-//        List<StandardUser> matchesOrdered = new ArrayList<>();
-//        matchesOrdered.addAll(orderedMatchDeltaMap.keySet());
-
+        //TODO - possibly change return value to Optional.of(top matched sUser), discuss with daniel as above
         return new ArrayList<>(orderedMatchDeltaMap.keySet());
 
-        //TODO should just return match or also info about polarity etc.?
+        //TODO should just return match or also info about polarity etc.? story says just email of top match
     }
-
 }
