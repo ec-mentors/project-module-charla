@@ -92,7 +92,8 @@ public class MatchService {
         //this is based on the ticket as it currently stands (where we should return only the top match)
         if (matches.isEmpty()) {
             //return Optional.empty();
-            return List.of();
+            //return List.of();
+            throw new RuntimeException("Unfortunately, there were no matches found for those criteria");
         } else if (matches.size() == 1) {
             //TODO - change return value to Optional of instance not set of sUsers
             // will also need to change expectation of restTemplate in users service
@@ -124,16 +125,19 @@ public class MatchService {
             double averageDelta = (double) totalDelta / size;
             matchMeanAverageDeltaMap.put(match, averageDelta);
         }
-
         //ordering the maps based on the deltas in descending order
         var matchAverageEntryList = new ArrayList<>(matchMeanAverageDeltaMap.entrySet());
         matchAverageEntryList.sort(Map.Entry.comparingByValue(Comparator.reverseOrder()));
+
 
         Map<StandardUser, Double> orderedMatchDeltaMap = new LinkedHashMap<>();
         for (var entry : matchAverageEntryList) {
             orderedMatchDeltaMap.put(entry.getKey(), entry.getValue());
         }
         //TODO - possibly change return value to Optional.of(top matched sUser), discuss with daniel as above
+        System.out.println("key set: " + orderedMatchDeltaMap.keySet());
+        System.out.println("entry list: " + matchAverageEntryList);
+        System.out.println("orderedMap: " + orderedMatchDeltaMap);
         return new ArrayList<>(orderedMatchDeltaMap.keySet());
 
         //TODO should just return match or also info about polarity etc.? story says just email of top match

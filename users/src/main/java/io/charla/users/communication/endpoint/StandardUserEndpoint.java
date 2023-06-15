@@ -45,6 +45,15 @@ public class StandardUserEndpoint {
     List<StandardUser> getMatches(@RequestBody MatchPropertiesDto matchPropertiesDto) {
         return matcherClient.findMatches(matchPropertiesDto);
     }
+    @GetMapping("/match-one")
+    @Secured("ROLE_USER")
+    StandardUser getMatch(@RequestBody MatchPropertiesDto matchPropertiesDto) {
+        var a = matcherClient.findMatches(matchPropertiesDto);
+        if (a.isEmpty()) {
+            return null;
+        }
+        return a.get(0);
+    }
 
     @PutMapping("/change-password/{id}")
     @Secured("ROLE_USER")
