@@ -20,7 +20,8 @@ public class MatchService {
 
     public StandardUser checkMatchIsReady(MatchPropertiesDto matchPropertiesDto) {
         //userId in dto is user or standardUser id?
-        StandardUser standardUser = standardUserRepository.findById(matchPropertiesDto.getStandardUserId()).orElseThrow(() -> new RuntimeException("user not found"));
+        StandardUser standardUser = standardUserRepository.findById(matchPropertiesDto.getStandardUserId())
+                .orElseThrow(() -> new RuntimeException("user not found"));
 
         //check mandatory fields are not null
         //check that profile is filled, if one is filled then all should be

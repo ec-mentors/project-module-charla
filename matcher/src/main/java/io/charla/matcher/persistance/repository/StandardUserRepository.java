@@ -13,7 +13,6 @@ import java.util.Optional;
 import java.util.Set;
 
 public interface StandardUserRepository extends JpaRepository<StandardUser, Long> {
-    Optional<StandardUser> findByUser(User user);
     //Set<StandardUser> findAllByLanguagesIn(Set<Language> languages);
     Set<StandardUser> findAllByLanguagesInAndPreferredTopicsIn(Set<Language> languages, Set<Topic> topics);
     Set<StandardUser> findAllByLanguagesInAndPreferredTopicsInAndCountry(Set<Language> languages, Set<Topic> topics, Country country);
