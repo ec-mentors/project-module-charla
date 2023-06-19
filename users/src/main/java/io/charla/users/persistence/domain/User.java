@@ -29,10 +29,26 @@ public class User {
     @Column(unique = true)
     private String verificationCode;
 
+    @Column(unique = true)
+    private String resetCode;
+
     private boolean verified;
 
     @Email
     private String tempEmail;
+
+
+
+    public void setTempPassword(String tempPassword) {
+        this.tempPassword = tempPassword;
+    }
+
+
+    private String tempPassword;
+
+    public String getTempPassword() {
+        return tempPassword;
+    }
 
     public User() {
     }
@@ -42,6 +58,16 @@ public class User {
         this.password = password;
         this.role = role;
     }
+
+
+    public String getResetCode() {
+        return resetCode;
+    }
+
+    public void setResetCode(String resetCode) {
+        this.resetCode = resetCode;
+    }
+
 
     public String getTempEmail() {
         return tempEmail;

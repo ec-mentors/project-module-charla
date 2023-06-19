@@ -22,6 +22,8 @@ public class EmailSenderServices {
     private final String emailNotSent;
     private String emailContent;
     private String newEmailContent;
+
+    private  String resetPassContent;
     private final String sender, senderName, subject;
 
     public EmailSenderServices(JavaMailSender mailSender,
@@ -30,7 +32,8 @@ public class EmailSenderServices {
                                @Value("${sender-name}") String senderName,
                                @Value("${subject}") String subject,
                                @Value("${email-content}") String emailContent,
-                               @Value("${new-email-content}") String newEmailContent) {
+                               @Value("${new-email-content}") String newEmailContent,
+                               @Value("${reset-pass-content}") String resetPassContent) {
         this.mailSender = mailSender;
         this.emailNotSent = emailNotSent;
         this.sender = sender;
@@ -38,6 +41,7 @@ public class EmailSenderServices {
         this.subject = subject;
         this.emailContent = emailContent;
         this.newEmailContent = newEmailContent;
+        this.resetPassContent = resetPassContent;
     }
 
 
@@ -124,5 +128,39 @@ public class EmailSenderServices {
 
     }
 
+
+    public void sendRestCode(User user) {
+
+
+        //String urlWithCode=  "http://localhost:9001/users"+"/verify?code="+user.getVerificationCode();
+
+        String urlWithCode = "http://" + getIp() + ":9001/users" + "/new-password?code=" + user.getResetCode();
+
+
+
+        String emailContents = resetPassContent.replace("{urlWithCode}", urlWithCode);
+
+
+        try {
+
+            MimeMessage mimeMessage = mailSender.createMimeMessage();
+            MimeMessageHelper helper =
+                    new MimeMessageHelper(mimeMessage, true);
+
+            helper.setFrom(sender, senderName);
+            helper.setTo(user.getEmail());
+
+            helper.setSubject("Reset Password");
+
+            helper.setText(emailContents, true);
+
+            mailSender.send(mimeMessage);
+
+
+        } catch (MessagingException | UnsupportedEncodingException e) {
+            throw new IllegalStateException(emailNotSent);
+        }
+
+    }
 
 }

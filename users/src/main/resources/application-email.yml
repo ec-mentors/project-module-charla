@@ -60,3 +60,14 @@ new_email_content: |
           <p>Charla Team</p>
           </div>
           </body>
+
+reset_pass_content: |
+    <body>
+    <div class="container">
+    <p>Dear <strong>HumanTalk</strong> subscriber,</p>
+    <p>Please click the link below to confirm your password change:</p>
+    <h5><a href="{urlWithCode}" target="_self">CONFIRM</a></h5>
+    <p>Thank you,</p>
+    <p>Charla Team</p>
+    </div>
+    </body>
