@@ -135,11 +135,6 @@ public class MatchService {
             orderedMatchDeltaMap.put(entry.getKey(), entry.getValue());
         }
         //TODO - possibly change return value to Optional.of(top matched sUser), discuss with daniel as above
-        System.out.println("key set: " + orderedMatchDeltaMap.keySet());
-        System.out.println("entry list: " + matchAverageEntryList);
-        System.out.println("orderedMap: " + orderedMatchDeltaMap);
         return new ArrayList<>(orderedMatchDeltaMap.keySet());
-
-        //TODO should just return match or also info about polarity etc.? story says just email of top match
     }
 }
