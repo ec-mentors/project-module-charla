@@ -10,10 +10,12 @@ messages:
   user_service:
     already_linked: "Email address already linked to an account"
     already_verified: "you account is already verified"
-    verification_sent: "Email has been sent to your email for verification"
+    verification_sent: "confirmation has been sent to your email"
     invalid_code: "Invalid Verification code or already used"
+    user_not_verified: "User account is not verified"
     account_verified: "<h1 style=\"color:#db1818; text-align:center;\">Congratulations, you are now verified!"
     new_email_verified: "<h1 style=\"color:#db1818; text-align:center;\">Congratulations, your new email is now verified!</h1>"
+    new_password_confirmed: "<h1 style=\"color:#9c9d61; text-align:center;\">Your new pass confirmed, please don't forget anymore!"
     logged_in: "Finally you are logged in now"
     passwords_not_match: "the passwords not match"
     old_password_incorrect: "old password is not correct"

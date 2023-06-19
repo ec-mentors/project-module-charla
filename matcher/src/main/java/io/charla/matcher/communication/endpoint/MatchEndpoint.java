@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import java.util.Set;
+import java.util.List;
 
 @RestController
 @RequestMapping("/match")
@@ -20,11 +20,8 @@ public class MatchEndpoint {
         this.matchService = matchService;
     }
     @PostMapping
-    Set<StandardUser> findMatches(@Valid @RequestBody MatchPropertiesDto matchPropertiesDto) {
+    List<StandardUser> findMatches(@Valid @RequestBody MatchPropertiesDto matchPropertiesDto) {
         return matchService.findMatches(matchPropertiesDto);
     }
 
-    //TODO - //CLIENT IN USER
-    //    //set of users in findmatch
-    //    test
 }

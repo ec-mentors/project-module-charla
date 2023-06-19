@@ -2,19 +2,18 @@ package io.charla.users.communication.endpoint;
 
 
 import io.charla.users.communication.client.MatcherClient;
-import io.charla.users.communication.dto.MatchPropertiesDto;
 import io.charla.users.communication.dto.ChangeEmailDto;
 import io.charla.users.communication.dto.ChangePasswordDto;
+import io.charla.users.communication.dto.MatchPropertiesDto;
 import io.charla.users.communication.dto.TopicScoreDto;
 import io.charla.users.logic.StandardUserService;
 import io.charla.users.logic.UserService;
 import io.charla.users.persistence.domain.StandardUser;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Set;
+import java.util.List;
 
 @RestController
 @RequestMapping("/standard-users")
@@ -43,8 +42,17 @@ public class StandardUserEndpoint {
 
     @GetMapping("/match")
     @Secured("ROLE_USER")
-    Set<StandardUser> getMatches(@RequestBody MatchPropertiesDto matchPropertiesDto) {
+    List<StandardUser> getMatches(@RequestBody MatchPropertiesDto matchPropertiesDto) {
         return matcherClient.findMatches(matchPropertiesDto);
+    }
+    @GetMapping("/match-one")
+    @Secured("ROLE_USER")
+    StandardUser getMatch(@RequestBody MatchPropertiesDto matchPropertiesDto) {
+        var a = matcherClient.findMatches(matchPropertiesDto);
+        if (a.isEmpty()) {
+            return null;
+        }
+        return a.get(0);
     }
 
     @PutMapping("/change-password/{id}")
