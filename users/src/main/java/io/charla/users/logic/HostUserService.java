@@ -31,6 +31,7 @@ public class HostUserService {
         this.hostUserRepository = hostUserRepository;
         this.userRepository = userRepository;
     }
+    //TODO Add safeplace translator function inside here so no logic is in the endpoint
     public SafePlace createSafePlace(SafePlace safePlace, Long id) {
 //        if (safePlace.getName().isEmpty()) {
 //            throw new MandatoryPropertyException("key \"name:\" is mandatory");
