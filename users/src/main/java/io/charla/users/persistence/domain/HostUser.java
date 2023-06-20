@@ -34,6 +34,10 @@ public class HostUser {
     public HostUser() {
     }
 
+    public HostUser(User user, Set<SafePlace> safePlaces) {
+        this.user = user;
+        this.safePlaces = safePlaces;
+    }
 
     public HostUser(User user) {
         this.user = user;

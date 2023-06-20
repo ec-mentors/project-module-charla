@@ -49,4 +49,14 @@ public class SafePlaceDTO {
     public void setKeywords(List<String> keywords) {
         this.keywords = keywords;
     }
+
+    @Override
+    public String toString() {
+        return "SafePlaceDTO{" +
+                "name='" + name + '\'' +
+                ", country='" + country + '\'' +
+                ", city='" + city + '\'' +
+                ", keywords=" + keywords +
+                '}';
+    }
 }
