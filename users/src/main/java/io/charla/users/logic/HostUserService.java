@@ -12,7 +12,9 @@ import io.charla.users.security.ValidUserAccess;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class HostUserService {
@@ -30,6 +32,10 @@ public class HostUserService {
         this.validUserAccess = validUserAccess;
         this.hostUserRepository = hostUserRepository;
         this.userRepository = userRepository;
+    }
+
+    public Set<SafePlace> getUserSafePlaces(Long id) {
+        return hostUserRepository.getById(id).getSafePlaces();
     }
     public SafePlace createSafePlace(SafePlace safePlace, Long id) {
 //        if (safePlace.getName().isEmpty()) {

@@ -12,6 +12,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Set;
 
 @Validated
 @RestController
@@ -34,7 +35,12 @@ public class HostUserEndpoint {
         return safePlace;
     }
 
-
+    @GetMapping("/get-safeplace/{id}")
+    @Secured("ROLE_HOST")
+    public Set<SafePlace> getSafePlaces(@PathVariable Long id) {
+        return hostUserService.getUserSafePlaces(id);
+    }
+    
     @GetMapping("/get-profile/{id}")
     public String getHostProfileData(@PathVariable Long id) {
 
