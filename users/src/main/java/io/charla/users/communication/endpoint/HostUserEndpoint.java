@@ -40,7 +40,7 @@ public class HostUserEndpoint {
     public Set<SafePlace> getSafePlaces(@PathVariable Long id) {
         return hostUserService.getUserSafePlaces(id);
     }
-    
+
     @GetMapping("/get-profile/{id}")
     public String getHostProfileData(@PathVariable Long id) {
 

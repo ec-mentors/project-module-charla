@@ -35,7 +35,9 @@ public class HostUserService {
     }
 
     public Set<SafePlace> getUserSafePlaces(Long id) {
-        return hostUserRepository.getById(id).getSafePlaces();
+        HostUser hostUser = hostUserRepository.getById(id);
+        validUserAccess.isValidUserAccess(hostUser.getUser().getId());
+        return hostUser.getSafePlaces();
     }
     public SafePlace createSafePlace(SafePlace safePlace, Long id) {
 //        if (safePlace.getName().isEmpty()) {
