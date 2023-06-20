@@ -12,7 +12,9 @@ import io.charla.users.security.ValidUserAccess;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class HostUserService {
@@ -32,6 +34,13 @@ public class HostUserService {
         this.userRepository = userRepository;
     }
     //TODO Add safeplace translator function inside here so no logic is in the endpoint
+
+    public Set<SafePlace> getUserSafePlaces(Long id) {
+        HostUser hostUser = hostUserRepository.getById(id);
+        validUserAccess.isValidUserAccess(hostUser.getUser().getId());
+        return hostUser.getSafePlaces();
+    }
+    
     public SafePlace createSafePlace(SafePlace safePlace, Long id) {
 //        if (safePlace.getName().isEmpty()) {
 //            throw new MandatoryPropertyException("key \"name:\" is mandatory");
