@@ -31,16 +31,26 @@ public class SafePlace {
     @Enumerated(EnumType.STRING)
     private List<SafePlaceKeywords> keywords;
 
+    private int vievs;
+
 
     public SafePlace() {
     }
 
+    public int getVievs() {
+        return vievs;
+    }
+
+    public void setVievs(int vievs) {
+        this.vievs = vievs;
+    }
 
     public SafePlace(String name, Country country, City city, List<SafePlaceKeywords> keywords) {
         this.name = name;
         this.country = country;
         this.city = city;
         this.keywords = keywords;
+
     }
 
     public String getName() {

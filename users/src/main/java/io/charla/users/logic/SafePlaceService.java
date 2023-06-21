@@ -18,7 +18,6 @@ public class SafePlaceService {
         return new SafePlace(safePlaceDTO.getName(),
                 Country.valueOf(safePlaceDTO.getCountry()),
                 City.valueOf(safePlaceDTO.getCity()),
-                safePlaceKeywords
-                );
+                safePlaceKeywords);
     }
 }

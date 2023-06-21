@@ -52,6 +52,7 @@ public class HostUserService {
 //            throw new MandatoryPropertyException("key \"city:\" is mandatory");
 //        }
         HostUser hostUser = hostUserRepository.getById(id);
+        safePlace.setVievs(0);
         hostUser.getSafePlaces().add(safePlace);
         safePlaceRepository.save(safePlace);
         hostUserRepository.save(hostUser);
