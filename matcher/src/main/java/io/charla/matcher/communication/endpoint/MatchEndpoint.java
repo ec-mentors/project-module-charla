@@ -12,16 +12,20 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("/match")
+@RequestMapping
 public class MatchEndpoint {
     private final MatchService matchService;
 
     public MatchEndpoint(MatchService matchService) {
         this.matchService = matchService;
     }
-    @PostMapping
+    @PostMapping("/matches")
     List<StandardUser> findMatches(@Valid @RequestBody MatchPropertiesDto matchPropertiesDto) {
         return matchService.findMatches(matchPropertiesDto);
+    }
+    @PostMapping("/top-match")
+    StandardUser findTopMatch(@Valid @RequestBody MatchPropertiesDto matchPropertiesDto) {
+        return matchService.findTopMatch(matchPropertiesDto);
     }
 
 }

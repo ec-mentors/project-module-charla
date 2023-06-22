@@ -137,4 +137,8 @@ public class MatchService {
         //TODO - possibly change return value to Optional.of(top matched sUser), discuss with daniel as above
         return new ArrayList<>(orderedMatchDeltaMap.keySet());
     }
+
+    public StandardUser findTopMatch(MatchPropertiesDto matchPropertiesDto) {
+        return findMatches(matchPropertiesDto).get(0);
+    }
 }

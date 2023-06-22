@@ -196,4 +196,13 @@ public class CustomExceptionHandler implements AuthenticationEntryPoint {
     public ResponseEntity<String> testAll(Exception e){
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
     }
+
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<String> handleMatcherExceptions(RuntimeException rte) {
+        return ResponseEntity.ok(rte.getMessage());
+    }
+//    @ExceptionHandler(HttpMessageNotReadableException.class)
+//    public ResponseEntity<String> handleMatcherExceptions1(HttpMessageNotReadableException httpMessageNotReadableException) {
+//        return ResponseEntity.ok(httpMessageNotReadableException.getMessage());
+//    }
 }

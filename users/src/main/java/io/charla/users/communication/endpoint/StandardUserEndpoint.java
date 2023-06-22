@@ -40,19 +40,16 @@ public class StandardUserEndpoint {
         return standardUserService.modifyOpinions(id, topicScoreDto);
     }
 
-    @GetMapping("/match")
+    @GetMapping("/matches")
     @Secured("ROLE_USER")
     List<StandardUser> getMatches(@RequestBody MatchPropertiesDto matchPropertiesDto) {
         return matcherClient.findMatches(matchPropertiesDto);
     }
-    @GetMapping("/match-one")
+    //TODO - handle HttpMessageNotFound exceptions
+    @GetMapping("/top-match")
     @Secured("ROLE_USER")
     StandardUser getMatch(@RequestBody MatchPropertiesDto matchPropertiesDto) {
-        var a = matcherClient.findMatches(matchPropertiesDto);
-        if (a.isEmpty()) {
-            return null;
-        }
-        return a.get(0);
+        return matcherClient.findTopMatch(matchPropertiesDto);
     }
 
     @PutMapping("/change-password/{id}")
