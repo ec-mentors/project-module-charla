@@ -34,10 +34,10 @@ public class StandardUserEndpoint {
         return standardUserService.addSafePlace(standardUserId, safePlaceId);
     }
 
-    @PutMapping("/{userId}/remove/{safePlaceId}")
+    @PutMapping("/{standardUserId}/remove/{safePlaceId}")
     @Secured("ROLE_USER")
-    StandardUser removeSafePlace(@PathVariable long userId, @PathVariable long safePlaceId) {
-        return standardUserService.removeSafePlace(userId, safePlaceId);
+    StandardUser removeSafePlace(@PathVariable long standardUserId, @PathVariable long safePlaceId) {
+        return standardUserService.removeSafePlace(standardUserId, safePlaceId);
     }
 
     @PutMapping("/edit-profile/{id}")
