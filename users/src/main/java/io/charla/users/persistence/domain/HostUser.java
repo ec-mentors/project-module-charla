@@ -34,7 +34,6 @@ public class HostUser {
     public HostUser() {
     }
 
-
     public HostUser(User user) {
         this.user = user;
     }

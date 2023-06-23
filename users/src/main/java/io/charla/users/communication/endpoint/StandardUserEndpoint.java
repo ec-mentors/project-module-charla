@@ -20,7 +20,6 @@ import java.util.List;
 public class StandardUserEndpoint {
     private final StandardUserService standardUserService;
     private final UserService userService;
-
     private final MatcherClient matcherClient;
 
     public StandardUserEndpoint(StandardUserService standardUserService, MatcherClient matcherClient, UserService userService) {
@@ -29,11 +28,24 @@ public class StandardUserEndpoint {
         this.userService = userService;
     }
 
+    @PutMapping("/{standardUserId}/add/{safePlaceId}")
+    @Secured("ROLE_USER")
+    StandardUser addSafePlace(@PathVariable long standardUserId, @PathVariable long safePlaceId) {
+        return standardUserService.addSafePlace(standardUserId, safePlaceId);
+    }
+
+    @PutMapping("/{userId}/remove/{safePlaceId}")
+    @Secured("ROLE_USER")
+    StandardUser removeSafePlace(@PathVariable long userId, @PathVariable long safePlaceId) {
+        return standardUserService.removeSafePlace(userId, safePlaceId);
+    }
+
     @PutMapping("/edit-profile/{id}")
     @Secured("ROLE_USER")
     StandardUser editProfile(@RequestBody StandardUser standardUser, @PathVariable long id) {
         return standardUserService.editProfile(standardUser, id);
     }
+
     @PutMapping("/add-score/{id}")
     @Secured("ROLE_USER")
     StandardUser addScore(@Valid @RequestBody TopicScoreDto topicScoreDto, @PathVariable long id) {

@@ -4,26 +4,65 @@ package io.charla.users.logic;
 import io.charla.users.communication.dto.TopicScoreDto;
 import io.charla.users.exception.MandatoryPropertyException;
 import io.charla.users.exception.UserNotFoundException;
+import io.charla.users.persistence.domain.SafePlace;
 import io.charla.users.persistence.domain.StandardUser;
 import io.charla.users.persistence.domain.User;
 import io.charla.users.persistence.domain.enums.Topic;
+import io.charla.users.persistence.repository.SafePlaceRepository;
 import io.charla.users.persistence.repository.StandardUserRepository;
 import io.charla.users.persistence.repository.UserRepository;
 import io.charla.users.security.ValidUserAccess;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class StandardUserService {
     private final StandardUserRepository standardUserRepository;
     private final UserRepository userRepository;
-
+    private final SafePlaceRepository safePlaceRepository;
     private final ValidUserAccess validUserAccess;
     public StandardUserService(StandardUserRepository standardUserRepository,
                                UserRepository userRepository,
-                               ValidUserAccess validUserAccess) {
+                               SafePlaceRepository safePlaceRepository, ValidUserAccess validUserAccess) {
         this.standardUserRepository = standardUserRepository;
         this.userRepository = userRepository;
+        this.safePlaceRepository = safePlaceRepository;
         this.validUserAccess = validUserAccess;
+    }
+
+    public StandardUser addSafePlace(long standardUserId, long safePlaceId) {
+        StandardUser standardUser = getStandardUser(standardUserId);
+        validUserAccess.isValidUserAccess(standardUser.getUser().getId());
+        SafePlace safePlace = getSafePlace(safePlaceId);
+        standardUser.getFavoriteSafePlaces().add(safePlace);
+        standardUserRepository.save(standardUser);
+        return standardUser;
+    }
+
+    public StandardUser removeSafePlace(long standardUserId, long safePlaceId) {
+        StandardUser standardUser = getStandardUser(standardUserId);
+        validUserAccess.isValidUserAccess(standardUser.getUser().getId());
+        SafePlace safePlace = getSafePlace(safePlaceId);
+        standardUser.getFavoriteSafePlaces().remove(safePlace);
+        standardUserRepository.save(standardUser);
+        return standardUser;
+    }
+
+    private SafePlace getSafePlace(long id) {
+        Optional<SafePlace> oSafePlace = safePlaceRepository.findById(id);
+        if (oSafePlace.isEmpty()) {
+            throw new UserNotFoundException("safe place with id: " + id + " not found");
+        }
+        return oSafePlace.get();
+    }
+
+    private StandardUser getStandardUser(long id) {
+        Optional<StandardUser> oStandardUser = standardUserRepository.findById(id);
+        if (oStandardUser.isEmpty()) {
+            throw new UserNotFoundException("user with id: " + id + " not found");
+        }
+        return oStandardUser.get();
     }
 
     public void createStandardUser(User user) {
