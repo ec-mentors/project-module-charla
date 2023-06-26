@@ -6,6 +6,7 @@ import io.charla.users.communication.dto.ChangeEmailDto;
 import io.charla.users.communication.dto.ChangePasswordDto;
 import io.charla.users.communication.dto.MatchPropertiesDto;
 import io.charla.users.communication.dto.TopicScoreDto;
+import io.charla.users.logic.SafePlaceService;
 import io.charla.users.logic.StandardUserService;
 import io.charla.users.logic.UserService;
 import io.charla.users.persistence.domain.StandardUser;
@@ -19,15 +20,22 @@ import java.util.List;
 @RequestMapping("/standard-users")
 public class StandardUserEndpoint {
     private final StandardUserService standardUserService;
+    private final SafePlaceService safePlaceService;
     private final UserService userService;
     private final MatcherClient matcherClient;
 
-    public StandardUserEndpoint(StandardUserService standardUserService, MatcherClient matcherClient, UserService userService) {
+    public StandardUserEndpoint(StandardUserService standardUserService, SafePlaceService safePlaceService, MatcherClient matcherClient, UserService userService) {
         this.standardUserService = standardUserService;
+        this.safePlaceService = safePlaceService;
         this.matcherClient = matcherClient;
         this.userService = userService;
     }
 
+    @PutMapping("/{standardUserId}/view/{safePlaceId}")
+    @Secured("ROLE_USER")
+    void viewSafePlace(@PathVariable long safePlaceId) {
+        safePlaceService.increaseViews(safePlaceId);
+    }
     @PutMapping("/{standardUserId}/add/{safePlaceId}")
     @Secured("ROLE_USER")
     StandardUser addSafePlace(@PathVariable long standardUserId, @PathVariable long safePlaceId) {

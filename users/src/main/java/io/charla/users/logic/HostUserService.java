@@ -1,7 +1,6 @@
 package io.charla.users.logic;
 
 import io.charla.users.communication.dto.HostDto;
-import io.charla.users.exception.MandatoryPropertyException;
 import io.charla.users.persistence.domain.HostUser;
 import io.charla.users.persistence.domain.SafePlace;
 import io.charla.users.persistence.domain.User;
@@ -12,7 +11,6 @@ import io.charla.users.security.ValidUserAccess;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -42,17 +40,8 @@ public class HostUserService {
     }
     
     public SafePlace createSafePlace(SafePlace safePlace, Long id) {
-//        if (safePlace.getName().isEmpty()) {
-//            throw new MandatoryPropertyException("key \"name:\" is mandatory");
-//        }
-//        if (safePlace.getCountry() == null) {
-//            throw new MandatoryPropertyException("key \"country:\" is mandatory");
-//        }
-//        if (safePlace.getCity() == null) {
-//            throw new MandatoryPropertyException("key \"city:\" is mandatory");
-//        }
         HostUser hostUser = hostUserRepository.getById(id);
-        safePlace.setVievs(0);
+        safePlace.setViews(0);
         hostUser.getSafePlaces().add(safePlace);
         safePlaceRepository.save(safePlace);
         hostUserRepository.save(hostUser);
