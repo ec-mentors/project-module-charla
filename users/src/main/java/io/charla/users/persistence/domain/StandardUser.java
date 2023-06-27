@@ -8,10 +8,7 @@ import io.charla.users.persistence.domain.enums.Topic;
 
 import javax.persistence.*;
 import javax.validation.constraints.Pattern;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 public class StandardUser {
@@ -47,6 +44,11 @@ public class StandardUser {
     @Column(name = "preference")
     private Map<Topic, Integer> topicScoresMap = new HashMap<>();
 
+    @ElementCollection
+    @Column(name = "favorite")
+    private Set<SafePlace> favoriteSafePlaces;
+
+
     public StandardUser() {
     }
 
@@ -57,6 +59,14 @@ public class StandardUser {
         this.country = country;
         this.city = city;
         this.topicScoresMap = topicScoresMap;
+    }
+
+    public Set<SafePlace> getFavoriteSafePlaces() {
+        return favoriteSafePlaces;
+    }
+
+    public void setFavoriteSafePlaces(Set<SafePlace> favoriteSafePlaces) {
+        this.favoriteSafePlaces = favoriteSafePlaces;
     }
 
     public long getId() {
