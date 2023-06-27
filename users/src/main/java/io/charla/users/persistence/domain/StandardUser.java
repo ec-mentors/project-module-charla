@@ -44,8 +44,9 @@ public class StandardUser {
     @Column(name = "preference")
     private Map<Topic, Integer> topicScoresMap = new HashMap<>();
 
+    @ElementCollection
     @Column(name = "favorite")
-    private List<SafePlace> favoriteSafePlaces;
+    private Set<SafePlace> favoriteSafePlaces;
 
 
     public StandardUser() {
@@ -60,11 +61,11 @@ public class StandardUser {
         this.topicScoresMap = topicScoresMap;
     }
 
-    public List<SafePlace> getFavoriteSafePlaces() {
+    public Set<SafePlace> getFavoriteSafePlaces() {
         return favoriteSafePlaces;
     }
 
-    public void setFavoriteSafePlaces(List<SafePlace> favoriteSafePlaces) {
+    public void setFavoriteSafePlaces(Set<SafePlace> favoriteSafePlaces) {
         this.favoriteSafePlaces = favoriteSafePlaces;
     }
 

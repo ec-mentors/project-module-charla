@@ -32,11 +32,15 @@ public class SafePlaceService {
                 safePlaceKeywords);
     }
 
-    public void increaseViews(Long id) {
-        Optional<SafePlace> safePlace = safePlaceRepository.findById(id);
-        if (safePlace.isEmpty()) {
+    public SafePlace increaseViews(Long id) {
+        Optional<SafePlace> oSafePlace = safePlaceRepository.findById(id);
+        if (oSafePlace.isEmpty()) {
             throw new UserNotFoundException("Safe place not found!");
         }
-        safePlace.get().setViews(safePlace.get().getViews() + 1);
+        SafePlace safePlace = oSafePlace.get();
+        int current = safePlace.getViews();
+        safePlace.setViews(current + 1);
+        safePlaceRepository.save(safePlace);
+        return safePlace;
     }
 }

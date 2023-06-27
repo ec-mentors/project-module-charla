@@ -9,6 +9,7 @@ import io.charla.users.communication.dto.TopicScoreDto;
 import io.charla.users.logic.SafePlaceService;
 import io.charla.users.logic.StandardUserService;
 import io.charla.users.logic.UserService;
+import io.charla.users.persistence.domain.SafePlace;
 import io.charla.users.persistence.domain.StandardUser;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
@@ -33,8 +34,8 @@ public class StandardUserEndpoint {
 
     @PutMapping("/{standardUserId}/view/{safePlaceId}")
     @Secured("ROLE_USER")
-    void viewSafePlace(@PathVariable long safePlaceId) {
-        safePlaceService.increaseViews(safePlaceId);
+    SafePlace viewSafePlace(@PathVariable long safePlaceId) {
+        return safePlaceService.increaseViews(safePlaceId);
     }
     @PutMapping("/{standardUserId}/add/{safePlaceId}")
     @Secured("ROLE_USER")
